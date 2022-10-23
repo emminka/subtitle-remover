@@ -1,0 +1,16 @@
+1
+00:00:00,000 --> 00:00:02,999
+- Nevermind George, you can choose the fruit.
+
+2
+00:00:04,840 --> 00:00:05,760
+- Where is the fruit?
+
+3
+00:00:06,400 --> 00:00:07,480
+ - Over there.
+
+4
+00:00:09,000 --> 00:00:14,400
+There are apples, and oranges, and bananas and a very big melon.
+
