@@ -1,10 +1,12 @@
 from re import T
 import tkinter as tk
+from tkinter import *
 #import tkinter.ttk as ttk
-from tkVideoPlayer import TkinterVideo
+#from tkVideoPlayer import TkinterVideo
 from tkinter import filedialog
 import time
 from tkinter import ttk
+from tkvideo import tkvideo
 
 
 
@@ -13,17 +15,21 @@ def PauseVideo(event=None):
 
 
 def UploadVideo(event=None):
-    filename = filedialog.askopenfilename(filetypes=[("all video format", "*.mp4")])
-    print('Selected:', filename)
+    uploadedfile = filedialog.askopenfilename(filetypes=[("all video format", "*.mp4")])
+    print('Selected:', uploadedfile)
+
     b_selectarea.configure(activebackground =purple_clickable_button_clicked,bg=purple_clickable_button, state="normal")
-    global videoplayer 
+    '''global videoplayer 
     videoplayer = TkinterVideo(master=window, scaled=True)
-    videoplayer.load(filename)
+    videoplayer.load(uploadedfile)
     videoplayer.pack(expand=True, fill="both")
 
     videoplayer.play() # play the video
     #PauseVideo()
-    #videoplayer.pause() # play the video
+    #videoplayer.pause() # play the video '''
+
+    player = tkvideo(uploadedfile, my_label, loop = 1, size = (1280,720))
+    player.play()
 
 
 
@@ -46,6 +52,10 @@ videoplayer.load(r"titulky.mp4")
 videoplayer.pack(expand=True, fill="both")
 
 videoplayer.play() # play the video'''
+
+my_label = Label(window)
+my_label.pack()
+
 
 videoframe= tk.Frame(window)
 videoframe.pack(side = tk.TOP, pady = 12)

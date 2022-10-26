@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>Subtitle remover</title>
+    <meta http-equiv="Content-Security-Policy" content="default-src * self blob: data: gap:; style-src * self 'unsafe-inline' blob: data: gap:; script-src * 'self' 'unsafe-eval' 'unsafe-inline' blob: data: gap:; object-src * 'self' blob: data: gap:; img-src * self 'unsafe-inline' blob: data: gap:; connect-src self * 'unsafe-inline' blob: data: gap:; frame-src * self blob: data: gap:;" />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <style>
+        body {
+            background-color: #6D6A75;
+            font-family: Verdana, Geneva, Tahoma, sans-serif;
+        }
+
+        button:enabled {
+            background-color: #DCD0FF;
+            color: #3A3541;
+            border: solid 1px #3A3541;
+            border-radius: 12px;
+            width: 230px;
+            padding: 20px 32px;
+        }
+
+        button:active {
+            pointer-events: none;
+        }
+
+        button:hover {
+            cursor: pointer;
+        }
+
+        button:hover:disabled {
+            cursor: default;
+        }
+
+        button:disabled {
+            background-color: #B2B0B9;
+            color: #3A3541;
+            border: solid 1px #3A3541;
+            border-radius: 12px;
+            width: 230px;
+            padding: 20px 15px;
+        }
+
+        video {
+            display: block;
+            width: 1000px;
+            height: 500px;
+        }
+
+        .size_of_buttons {
+            font-size: 22px;
+        }
+
+        input[type="file"] {
+            display: none;
+        }
+
+    </style>
+</head>
+
+<body>
+    <video controls src="">
+
+    </video>
+
+    <label for="file-upload" style="display: inline-block;">
+        <button type="button" class="size_of_buttons">Upload Video</button>
+    </label>
+    <input id="file-upload" type="file" accept=".mp4" />
+    <button type="button" class="size_of_buttons" disabled>Select Area</button>
+    <button type="button" class="size_of_buttons" disabled>Delete Subtitles</button>
+
+    <script>
+        console.log("cau");
+
+        function onFileUpload(event) {
+            let filePath = $("#file-upload")[0].files[0].path;
+            console.log(filePath);
+            $("video").attr("src", filePath);
+        }
+
+        $("#file-upload").change(onFileUpload);
+    </script>
+</body>
+
+</html>
