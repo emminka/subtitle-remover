@@ -19,6 +19,7 @@
             border-radius: 12px;
             width: 230px;
             padding: 20px 32px;
+            margin: 0 auto;
         }
 
         button:active {
@@ -58,6 +59,14 @@
         }
 
     </style>
+
+
+    <script>   
+        function SelectArea() {   
+        window.open("https://www.javatpoint.com/");  
+        }   
+    </script>   
+
 </head>
 
 <body>
@@ -66,11 +75,12 @@
     </video>
 
     <label for="file-upload" style="display: inline-block;">
-        <button type="button" class="size_of_buttons">Upload Video</button>
+        <button type="button" id="UploadVideoButton" class="size_of_buttons">Upload Video</button>
     </label>
     <input id="file-upload" type="file" accept=".mp4" />
-    <button type="button" class="size_of_buttons" disabled>Select Area</button>
-    <button type="button" class="size_of_buttons" disabled>Delete Subtitles</button>
+
+    <button type="button" id="SelectAreaButton" onclick="SelectArea()" class="size_of_buttons" disabled>Select Area</button>
+    <button type="button" id="DeleteSubtitlesButton" class="size_of_buttons" disabled>Delete Subtitles</button>
 
     <script>
         console.log("cau");
@@ -79,9 +89,12 @@
             let filePath = $("#file-upload")[0].files[0].path;
             console.log(filePath);
             $("video").attr("src", filePath);
+            document.getElementById("SelectAreaButton").disabled = false;
         }
 
         $("#file-upload").change(onFileUpload);
+        //
+
     </script>
 </body>
 
