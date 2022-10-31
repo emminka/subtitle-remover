@@ -60,31 +60,23 @@
 
     </style>
 
-
-    <script>   
-        function SelectArea() {   
-        window.open("https://www.javatpoint.com/");  
-        }   
-    </script>   
-
 </head>
 
 <body>
-    <video controls src="">
+    <video  id="uploadedVideo" controls src="">
 
     </video>
+
 
     <label for="file-upload" style="display: inline-block;">
         <button type="button" id="UploadVideoButton" class="size_of_buttons">Upload Video</button>
     </label>
     <input id="file-upload" type="file" accept=".mp4" />
 
-    <button type="button" id="SelectAreaButton" onclick="SelectArea()" class="size_of_buttons" disabled>Select Area</button>
+    <button type="button" id="SelectAreaButton" class="size_of_buttons" disabled>Select Area</button>
     <button type="button" id="DeleteSubtitlesButton" class="size_of_buttons" disabled>Delete Subtitles</button>
 
     <script>
-        console.log("cau");
-
         function onFileUpload(event) {
             let filePath = $("#file-upload")[0].files[0].path;
             console.log(filePath);
@@ -93,8 +85,26 @@
         }
 
         $("#file-upload").change(onFileUpload);
-        //
+        
+        let videoElement = document.getElementById("uploadedVideo");
+        let SelectAreaButton = document.getElementById("SelectAreaButton");
 
+        let handleClick = function(e) {
+            
+            console.log(videoElement.currentTime);
+            console.log("Mouse-X: " + (e.clientX + window.pageXOffset));
+            console.log("Mouse-Y: " + (e.clientY + window.pageYOffset));
+            e.preventDefault();
+        }
+
+        let SelectAreaClicked = function(e){
+            videoElement.addEventListener("click", handleClick, false);
+            videoElement.pause();
+            alert("Select upper left corner of subtitle area");
+            
+        }
+
+        SelectAreaButton.addEventListener("mousedown", SelectAreaClicked, false);
     </script>
 </body>
 
