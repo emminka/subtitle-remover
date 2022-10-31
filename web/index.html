@@ -45,10 +45,22 @@
 
         video {
             display: block;
-            width: 1000px;
+            width: auto;
             height: 500px;
             margin-bottom: 25px;
+            /*position: fixed;*/
+            /*top: 0;
+            left: 0;*/
+                                
         }
+
+        .canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 10;
+            background-color:rgba(255,0,0,0.5);
+            }
 
         .size_of_buttons {
             font-size: 22px;
@@ -63,7 +75,7 @@
 </head>
 
 <body>
-    <video  id="uploadedVideo" controls src="">
+    <video  id="uploadedVideo" controls src="" >
 
     </video>
 
@@ -76,61 +88,101 @@
     <button type="button" id="SelectAreaButton" class="size_of_buttons" disabled>Select Area</button>
     <button type="button" id="DeleteSubtitlesButton" class="size_of_buttons" disabled>Delete Subtitles</button>
 
-    <script>
+   <canvas id="canvasOverVideo" class="canvas" style="display: none;"></canvas>
+
+    <script>    
+       /* function resize_canvas(element)
+        {
+        var w = element.offsetWidth;
+        var h = element.offsetHeight;
+        var cv = document.getElementById("cv1");
+        cv.width = w;
+        cv.height =h;
+        } */ 
         function onFileUpload(event) {
             let filePath = $("#file-upload")[0].files[0].path;
             console.log(filePath);
             $("video").attr("src", filePath);
-            document.getElementById("SelectAreaButton").disabled = false;
+            document.getElementById("SelectAreaButton").disabled = false; //urobim tlacitko select area aktivne
         }
 
         $("#file-upload").change(onFileUpload);
         
-        let leftUpClicked = false;
+        let leftUpClicked = 0;
+        let width = 0;
+        let height = 0;
+        let leftUpX = 0;
+        let leftUpY = 0;
+        let RightDownX = 0;
+        let RightDownY = 0;
         let videoElement = document.getElementById("uploadedVideo");
         let SelectAreaButton = document.getElementById("SelectAreaButton");
+        let DeleteSubtitlesButton = document.getElementById("DeleteSubtitlesButton");
 
         let handleClick = function(e) { 
 
-            let leftUpX;
-            let leftUpY;
-            let RightDownX;
-            let RightDownY;
-            if (leftUpClicked == false){
+            if (leftUpClicked == 0){
                 leftUpX = (e.clientX + window.pageXOffset);
                 leftUpY = (e.clientY + window.pageXOffset);
-                leftUpClicked = true;
+                leftUpClicked = 1;
                 console.log("lava hore x" + leftUpX)
                 console.log("lava hore y" + leftUpY)
                 alert("Select down right corner of subtitle area");
             }
-            else{
+            else if (leftUpClicked == 1){
                 RightDownX = (e.clientX + window.pageXOffset);
                 RightDownY = (e.clientY + window.pageXOffset);
                 console.log("prava dole x" + RightDownX)
                 console.log("prava dole y" + RightDownY)
-            }
-            
-            
+                leftUpClicked = 2;
+                document.getElementById("DeleteSubtitlesButton").disabled = false; //urobim tlacitko delete subtitles aktivne
+                width = (RightDownX - leftUpX);
+                height = (RightDownY - leftUpY);
+                console.log("sirka" + width);
+                console.log("vyska" + height);
+                console.log("aky je to typ" + typeof leftUpX, typeof width);
+                //fillRect(leftUpX, leftUpY, width, height);
+                console.log("kontrola nanovoooo");
 
-            
-            
-            
-            
-            
+                console.log("lava hore x" + leftUpX, typeof leftUpX);
+                console.log("lava hore y" + leftUpY, typeof leftUpY);
+                console.log("prava dole x" + RightDownX, typeof RightDownX);
+                console.log("prava dole y" + RightDownY, typeof RightDownY);
+                console.log("sirka" + width, typeof width);
+                console.log("vyska" + height, typeof height);
+
+               // document.getElementById("canvasOverVideo").style = false;
+                //document.getElementById("canvasOverVideo").style.top =height;
+
+
+               /* var c = document.getElementById("canvasOverVideo");
+                var ctx = c.getContext("2d");
+                ctx.fillRect(leftUpX, leftUpY, width, height);*/
+
+            }
+  
             e.preventDefault();
+           // videoElement.pause();
         }
 
-        
 
         let SelectAreaClicked = function(e){
+            leftUpClicked = 0;
             videoElement.addEventListener("click", handleClick, false);
             videoElement.pause();
             alert("Select upper left corner of subtitle area");
             
         }
 
+        let DeleteSubtitlesClicked = function(e){
+            alert("klikli sme")
+            
+        }
+
+
+
         SelectAreaButton.addEventListener("mousedown", SelectAreaClicked, false);
+        DeleteSubtitlesButton.addEventListener("mousedown", DeleteSubtitlesClicked, false);
     </script>
 </body>
 
