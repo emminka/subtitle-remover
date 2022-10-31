@@ -86,16 +86,42 @@
 
         $("#file-upload").change(onFileUpload);
         
+        let leftUpClicked = false;
         let videoElement = document.getElementById("uploadedVideo");
         let SelectAreaButton = document.getElementById("SelectAreaButton");
 
-        let handleClick = function(e) {
+        let handleClick = function(e) { 
+
+            let leftUpX;
+            let leftUpY;
+            let RightDownX;
+            let RightDownY;
+            if (leftUpClicked == false){
+                leftUpX = (e.clientX + window.pageXOffset);
+                leftUpY = (e.clientY + window.pageXOffset);
+                leftUpClicked = true;
+                console.log("lava hore x" + leftUpX)
+                console.log("lava hore y" + leftUpY)
+                alert("Select down right corner of subtitle area");
+            }
+            else{
+                RightDownX = (e.clientX + window.pageXOffset);
+                RightDownY = (e.clientY + window.pageXOffset);
+                console.log("prava dole x" + RightDownX)
+                console.log("prava dole y" + RightDownY)
+            }
             
-            console.log(videoElement.currentTime);
-            console.log("Mouse-X: " + (e.clientX + window.pageXOffset));
-            console.log("Mouse-Y: " + (e.clientY + window.pageYOffset));
+            
+
+            
+            
+            
+            
+            
             e.preventDefault();
         }
+
+        
 
         let SelectAreaClicked = function(e){
             videoElement.addEventListener("click", handleClick, false);
