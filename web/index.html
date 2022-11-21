@@ -5,7 +5,10 @@
     <meta charset="UTF-8">
     <title>Subtitle remover</title>
     <meta http-equiv="Content-Security-Policy" content="default-src * self blob: data: gap:; style-src * self 'unsafe-inline' blob: data: gap:; script-src * 'self' 'unsafe-eval' 'unsafe-inline' blob: data: gap:; object-src * 'self' blob: data: gap:; img-src * self 'unsafe-inline' blob: data: gap:; connect-src self * 'unsafe-inline' blob: data: gap:; frame-src * self blob: data: gap:;" />
+    <script>if (typeof module === 'object') {window.module = module; module = undefined;}
+    </script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script>if (window.module) module = window.module;</script>
     <style>
         body {
             background-color: #6D6A75;
@@ -89,7 +92,9 @@
     <button type="button" id="DeleteSubtitlesButton" class="size_of_buttons" disabled>Delete Subtitles</button>
 
    <canvas id="canvasOverVideo" class="canvas" style="display: none;"></canvas>
-
+   <script>
+    const renderer = require('./renderer.js');
+  </script>
     <script>    
        /* function resize_canvas(element)
         {
@@ -99,6 +104,7 @@
         cv.width = w;
         cv.height =h;
         } */ 
+        
         function onFileUpload(event) {
             let filePath = $("#file-upload")[0].files[0].path;
             console.log(filePath);
@@ -175,8 +181,9 @@
         }
 
         let DeleteSubtitlesClicked = function(e){
+            renderer.skript();
             alert("klikli sme")
-            
+            //let python = spawn('python', [path.join(app.getAppPath()), '..', 'deletesubtitles_new.py']);
         }
 
 

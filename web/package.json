@@ -1,14 +1,17 @@
 {
-    "name": "my-electron-app",
-    "version": "1.0.0",
-    "description": "Hello World!",
-    "main": "main.js",
-    "author": "Jane Doe",
-    "license": "MIT",
-    "devDependencies": {
-      "electron": "19.0.0"
-    },
-    "scripts": {
-      "start": "electron ."
-    }
+  "name": "my-electron-app",
+  "version": "1.0.0",
+  "description": "Hello World!",
+  "main": "main.js",
+  "author": "Jane Doe",
+  "license": "MIT",
+  "devDependencies": {
+    "electron": "19.0.0"
+  },
+  "scripts": {
+    "start": "electron ."
+  },
+  "dependencies": {
+    "python-shell": "^3.0.1"
   }
+}

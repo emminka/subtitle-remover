@@ -1,13 +1,33 @@
 const { app, BrowserWindow } = require('electron')
 const path = require('path')
 
+
+/*
+const {PythonShell} = require('python-shell');
+
+let pyshell = new PythonShell('script.py');
+
+pyshell.send(JSON.stringify([10]))
+
+pyshell.on('message', function(message) {
+  console.log(message);
+})
+
+pyshell.end(function (err) {
+  if (err){
+    throw err;
+  };
+  console.log('finished');
+});*/
+
 function createWindow () {
   const win = new BrowserWindow({
     width: 1170,
     height: 729,
     webPreferences: {
-      preload: path.join(__dirname, 'preload.js')
-    }
+      nodeIntegration: true,
+      contextIsolation: false,
+  }
   })
 
   //win.setMenu(null)
@@ -30,3 +50,4 @@ app.on('window-all-closed', () => {
     app.quit()
   }
 })
+

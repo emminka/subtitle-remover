@@ -8,7 +8,7 @@ import time
 #naosbime krat 2,13
 #titulky_vyssie
 
-video = cv2.VideoCapture(r"C:\Users\Emma\Desktop\Bakalarka\titulky_vyssie.mp4")
+video = cv2.VideoCapture(r"C:\Users\Emma\Desktop\Bakalarka\videos\titulky_vyssie.mp4")
 mask = cv2.imread(r"C:\Users\Emma\Desktop\Bakalarka\web\black.png")
 xL = 121
 yL= 831
