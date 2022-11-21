@@ -3,17 +3,65 @@ import numpy as np
 import random
 from random import randrange
 import time
+import sys
+import getopt
+
+#Lx = a
+#LY = b
+#Rx = c
+#Ry = d
+
+
+xL = None
+yL = None
+xR = None
+yR = None
+filepath = None
+
+argv = sys.argv[1:]
+
+try:
+    opts, args = getopt.getopt(argv, "a:b:c:d:e:")
+    
+except:
+    print("Error")
+
+for opt, arg in opts:
+    if opt in ['-a']:
+        xL = int(arg)
+        print("zapisujem lave x", xL);
+    elif opt in ['-b']:
+        yL = int(arg)
+        print("zapisujem lave y",yL);
+    elif opt in ['-c']:
+        xR = int(arg)
+        print("zapisujem prave x",xR);
+    elif opt in ['-d']:
+        yR = int(arg)  
+        print("zapisujem prave y", yR);
+    elif opt in ['-e']:
+        filepath = arg  
+        print("cesticka", filepath);
+         
+    
+if(xL is None or yL is None or xR is None or yR is None or filepath is None):
+    print("dovidopo exitujeeme ,daco  je plano")
+    sys.exit(1)
+
+#print( xL +" " + yL+" " +xR+" " +yR)
+print(type(xL))
+print(type(xR))
+  
+
 
 #pomocou inpaint
 #naosbime krat 2,13
 #titulky_vyssie
 
-video = cv2.VideoCapture(r"C:\Users\Emma\Desktop\Bakalarka\videos\titulky_vyssie.mp4")
+video = cv2.VideoCapture(filepath)
 mask = cv2.imread(r"C:\Users\Emma\Desktop\Bakalarka\web\black.png")
-xL = 121
-yL= 831
-xR = 1781
-yR = 910
+
+
 
 
 output = cv2.VideoWriter('output.mp4', -1, 30.0, (1920,1080))

@@ -104,19 +104,10 @@
         cv.width = w;
         cv.height =h;
         } */ 
-        
-        function onFileUpload(event) {
-            let filePath = $("#file-upload")[0].files[0].path;
-            console.log(filePath);
-            $("video").attr("src", filePath);
-            document.getElementById("SelectAreaButton").disabled = false; //urobim tlacitko select area aktivne
-        }
 
-        $("#file-upload").change(onFileUpload);
-        
         let leftUpClicked = 0;
-        let width = 0;
-        let height = 0;
+        let widthOfVideo = 0;
+        let heightOfVideo = 0;
         let leftUpX = 0;
         let leftUpY = 0;
         let RightDownX = 0;
@@ -124,6 +115,30 @@
         let videoElement = document.getElementById("uploadedVideo");
         let SelectAreaButton = document.getElementById("SelectAreaButton");
         let DeleteSubtitlesButton = document.getElementById("DeleteSubtitlesButton");
+        let filePath;
+        
+        function onFileUpload(event) {
+            filePath = $("#file-upload")[0].files[0].path;
+            console.log(filePath);
+            $("video").attr("src", filePath);
+            
+
+            /*
+            widthOfVideo = $("video").videoWidth;
+            heightOfVideo = $("video")[0].videoHeight;
+            console.log("sirka videa" + widthOfVideo);
+            console.log("vyska videa" + heightOfVideo);*/
+            
+
+            document.getElementById("SelectAreaButton").disabled = false; //urobim tlacitko select area aktivne
+        }
+
+        $("#file-upload").change(onFileUpload);
+        
+        
+
+        
+        
 
         let handleClick = function(e) { 
 
@@ -140,22 +155,51 @@
                 RightDownY = (e.clientY + window.pageXOffset);
                 console.log("prava dole x" + RightDownX)
                 console.log("prava dole y" + RightDownY)
+                console.log("sirka videa" + widthOfVideo)
+                console.log("vyska videa" + heightOfVideo)
+
+
+                console.log("no toto by malo fungovat:::::::")
+                heightOfVideo = $("video")[0].videoHeight; //vyska nahraneho videa
+                widthOfVideo = $("video")[0].videoWidth; //sirka nahraneho videa
+                console.log("vysoka origo", heightOfVideo)
+                console.log("siroka origo", widthOfVideo);
+                heightOfVideoInApp = $("video").height(); //vyska videa v konzole
+                widthOfVideoInApp = $("video").width(); //sirka videa v konzole
+                console.log("vysoka app", heightOfVideoInApp)
+                console.log("siroka app", widthOfVideoInApp);
+
+                //prepocitanie pomerovo ked je video male (nezvacsene)
+                //-8 kvoli ramceku ktory je okolo video
+
+                leftUpX = Math.round(-8 +(leftUpX/widthOfVideoInApp) * widthOfVideo)
+                leftUpY = Math.round(-8 +(leftUpY/heightOfVideoInApp)*heightOfVideo)
+                RightDownX = Math.round(-8 +(RightDownX/widthOfVideoInApp) * widthOfVideo)
+                RightDownY = Math.round(-8 +(RightDownY/heightOfVideoInApp)*heightOfVideo)
+
+                console.log("CISLA PO NOVOM")
+                console.log("prava dole x" + RightDownX)
+                console.log("prava dole y" + RightDownY)
+                console.log("lava hore x" + leftUpX)
+                console.log("lava hore y" + leftUpY)
+
+
                 leftUpClicked = 2;
                 document.getElementById("DeleteSubtitlesButton").disabled = false; //urobim tlacitko delete subtitles aktivne
-                width = (RightDownX - leftUpX);
-                height = (RightDownY - leftUpY);
-                console.log("sirka" + width);
-                console.log("vyska" + height);
-                console.log("aky je to typ" + typeof leftUpX, typeof width);
+                //width = (RightDownX - leftUpX);
+                //height = (RightDownY - leftUpY);
+                //console.log("sirka" + width);
+                //console.log("vyska" + height);
+                //console.log("aky je to typ" + typeof leftUpX, typeof width);
                 //fillRect(leftUpX, leftUpY, width, height);
-                console.log("kontrola nanovoooo");
+                /*console.log("kontrola nanovoooo");
 
                 console.log("lava hore x" + leftUpX, typeof leftUpX);
                 console.log("lava hore y" + leftUpY, typeof leftUpY);
                 console.log("prava dole x" + RightDownX, typeof RightDownX);
                 console.log("prava dole y" + RightDownY, typeof RightDownY);
                 console.log("sirka" + width, typeof width);
-                console.log("vyska" + height, typeof height);
+                console.log("vyska" + height, typeof height);*/
 
                // document.getElementById("canvasOverVideo").style = false;
                 //document.getElementById("canvasOverVideo").style.top =height;
@@ -181,7 +225,7 @@
         }
 
         let DeleteSubtitlesClicked = function(e){
-            renderer.skript();
+            renderer.skript(leftUpX, leftUpY, RightDownX ,RightDownY, filePath);
             alert("klikli sme")
             //let python = spawn('python', [path.join(app.getAppPath()), '..', 'deletesubtitles_new.py']);
         }
