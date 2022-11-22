@@ -153,6 +153,7 @@
             else if (leftUpClicked == 1){
                 RightDownX = (e.clientX + window.pageXOffset);
                 RightDownY = (e.clientY + window.pageXOffset);
+                $("video").attr("controls", true)
                 console.log("prava dole x" + RightDownX)
                 console.log("prava dole y" + RightDownY)
                 console.log("sirka videa" + widthOfVideo)
@@ -218,6 +219,7 @@
 
         let SelectAreaClicked = function(e){
             leftUpClicked = 0;
+            $("video").attr("controls", false);
             videoElement.addEventListener("click", handleClick, false);
             videoElement.pause();
             alert("Select upper left corner of subtitle area");

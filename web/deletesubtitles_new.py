@@ -53,7 +53,7 @@ if(xL is None or yL is None or xR is None or yR is None or filepath is None):
 video = cv2.VideoCapture(filepath)
 mask = np.zeros((heightOfVideo,widthOfVideo,3),np.uint8) #vykreslenie ciernje masky v rozmeroch videa
 
-output = cv2.VideoWriter('output.mp4', -1, 30.0, (widthOfVideo,heightOfVideo))
+output = cv2.VideoWriter('result_no_subtitles.mp4', -1, 30.0, (widthOfVideo,heightOfVideo)) #vysledne video
 
 cv2.rectangle(mask, (xL, yL), (xR, yR),(255,255,255), -1) #-1 for filled shape
 
@@ -67,30 +67,18 @@ if (video.isOpened()== False):
 while(video.isOpened()):
     # Capture frame-by-frame
     ret, frame = video.read()
-    
     if ret == True:
-
         # Press Q on keyboard to  exit
         if cv2.waitKey(30) & 0xFF == ord('q'):
             break
-        
         dst = cv2.inpaint(frame,gray_mask,3,cv2.INPAINT_TELEA)
-        
-        #cv2.imshow('Frame', dst)
-        #vyplnit_mi(1,"random")
-
-        #cv2.rectangle(frame, (xL, yL), (xR, yR),(73, 116, 164), -1)
-
         output.write(dst)
-
         # Display the resulting frame
-        cv2.imshow('Frame', dst)
-        
-        
+        # cv2.imshow('Frame', dst)   
     else: 
         break
-
-video.release()
+#video.release()
 #cv2.destroyAllWindows()
 output.release()
+print("Video has been released.")
 
