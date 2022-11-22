@@ -5,23 +5,20 @@ from random import randrange
 import time
 import sys
 import getopt
+import matplotlib.pyplot as plt
 
-#Lx = a
-#LY = b
-#Rx = c
-#Ry = d
-
-
-xL = None
+xL = None #suradnice z aplikacie
 yL = None
 xR = None
 yR = None
 filepath = None
+heightOfVideo = None
+widthOfVideo = None
 
 argv = sys.argv[1:]
 
 try:
-    opts, args = getopt.getopt(argv, "a:b:c:d:e:")
+    opts, args = getopt.getopt(argv, "a:b:c:d:e:f:g:")
     
 except:
     print("Error")
@@ -42,33 +39,25 @@ for opt, arg in opts:
     elif opt in ['-e']:
         filepath = arg  
         print("cesticka", filepath);
+    elif opt in ['-f']:
+        heightOfVideo = int(arg)
+        print("heightOfVideo", heightOfVideo);
+    elif opt in ['-g']:
+        widthOfVideo = int(arg)  
+        print("widthOfVideo", widthOfVideo);
          
-    
 if(xL is None or yL is None or xR is None or yR is None or filepath is None):
     print("dovidopo exitujeeme ,daco  je plano")
     sys.exit(1)
 
-#print( xL +" " + yL+" " +xR+" " +yR)
-print(type(xL))
-print(type(xR))
-  
-
-
-#pomocou inpaint
-#naosbime krat 2,13
-#titulky_vyssie
-
 video = cv2.VideoCapture(filepath)
-mask = cv2.imread(r"C:\Users\Emma\Desktop\Bakalarka\web\black.png")
+mask = np.zeros((heightOfVideo,widthOfVideo,3),np.uint8) #vykreslenie ciernje masky v rozmeroch videa
 
-
-
-
-output = cv2.VideoWriter('output.mp4', -1, 30.0, (1920,1080))
+output = cv2.VideoWriter('output.mp4', -1, 30.0, (widthOfVideo,heightOfVideo))
 
 cv2.rectangle(mask, (xL, yL), (xR, yR),(255,255,255), -1) #-1 for filled shape
 
-gray_mask = cv2.cvtColor(mask, cv2.COLOR_BGR2GRAY)
+gray_mask = cv2.cvtColor(mask, cv2.COLOR_BGR2GRAY) #na premalovanie lebo inak sa to nevysvetlitelne stazuje
 	
 #cv2.imshow('image', mask)
 
@@ -85,7 +74,6 @@ while(video.isOpened()):
         if cv2.waitKey(30) & 0xFF == ord('q'):
             break
         
-
         dst = cv2.inpaint(frame,gray_mask,3,cv2.INPAINT_TELEA)
         
         #cv2.imshow('Frame', dst)
