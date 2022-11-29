@@ -50,10 +50,16 @@ if(xL is None or yL is None or xR is None or yR is None or filepath is None):
     print("dovidopo exitujeeme ,daco  je plano")
     sys.exit(1)
 
+
 video = cv2.VideoCapture(filepath)
+
+koncovka = "_no_subtitles.mp4"
+new_name_same_path = filepath.split(".", 1)[0];
+new_name_same_path += koncovka;
+
 mask = np.zeros((heightOfVideo,widthOfVideo,3),np.uint8) #vykreslenie ciernje masky v rozmeroch videa
 
-output = cv2.VideoWriter('result_no_subtitles.mp4', -1, 30.0, (widthOfVideo,heightOfVideo)) #vysledne video
+output = cv2.VideoWriter(new_name_same_path, -1, 30.0, (widthOfVideo,heightOfVideo)) #vysledne video
 
 cv2.rectangle(mask, (xL, yL), (xR, yR),(255,255,255), -1) #-1 for filled shape
 
@@ -71,14 +77,14 @@ while(video.isOpened()):
         # Press Q on keyboard to  exit
         if cv2.waitKey(30) & 0xFF == ord('q'):
             break
-        dst = cv2.inpaint(frame,gray_mask,3,cv2.INPAINT_TELEA)
-        output.write(dst)
+        no_subtitles_frame = cv2.inpaint(frame,gray_mask,3,cv2.INPAINT_TELEA) #pomocou inpaint odstranujem (iba zamazavam) titulky
+        output.write(no_subtitles_frame)
         # Display the resulting frame
         # cv2.imshow('Frame', dst)   
     else: 
         break
 #video.release()
-#cv2.destroyAllWindows()
+cv2.destroyAllWindows()
 output.release()
 print("Video has been released.")
 

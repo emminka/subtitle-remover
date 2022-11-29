@@ -53,8 +53,7 @@
             margin-bottom: 25px;
             /*position: fixed;*/
             /*top: 0;
-            left: 0;*/
-                                
+            left: 0;*/          
         }
 
         .canvas {
@@ -78,8 +77,8 @@
 </head>
 
 <body>
+    
     <video  id="uploadedVideo" controls src="" >
-
     </video>
 
 
@@ -91,19 +90,12 @@
     <button type="button" id="SelectAreaButton" class="size_of_buttons" disabled>Select Area</button>
     <button type="button" id="DeleteSubtitlesButton" class="size_of_buttons" disabled>Delete Subtitles</button>
 
+
    <canvas id="canvasOverVideo" class="canvas" style="display: none;"></canvas>
    <script>
     const renderer = require('./renderer.js');
   </script>
     <script>    
-       /* function resize_canvas(element)
-        {
-        var w = element.offsetWidth;
-        var h = element.offsetHeight;
-        var cv = document.getElementById("cv1");
-        cv.width = w;
-        cv.height =h;
-        } */ 
 
         let leftUpClicked = 0;
         let widthOfVideo = 0;
@@ -116,29 +108,17 @@
         let SelectAreaButton = document.getElementById("SelectAreaButton");
         let DeleteSubtitlesButton = document.getElementById("DeleteSubtitlesButton");
         let filePath;
+        let directoryPath;
         
         function onFileUpload(event) {
             filePath = $("#file-upload")[0].files[0].path;
             console.log(filePath);
             $("video").attr("src", filePath);
-            
-
-            /*
-            widthOfVideo = $("video").videoWidth;
-            heightOfVideo = $("video")[0].videoHeight;
-            console.log("sirka videa" + widthOfVideo);
-            console.log("vyska videa" + heightOfVideo);*/
-            
-
             document.getElementById("SelectAreaButton").disabled = false; //urobim tlacitko select area aktivne
         }
 
         $("#file-upload").change(onFileUpload);
-        
-        
 
-        
-        
 
         let handleClick = function(e) { 
 
@@ -184,38 +164,12 @@
                 console.log("lava hore x" + leftUpX)
                 console.log("lava hore y" + leftUpY)
 
-
                 leftUpClicked = 2;
                 document.getElementById("DeleteSubtitlesButton").disabled = false; //urobim tlacitko delete subtitles aktivne
-                //width = (RightDownX - leftUpX);
-                //height = (RightDownY - leftUpY);
-                //console.log("sirka" + width);
-                //console.log("vyska" + height);
-                //console.log("aky je to typ" + typeof leftUpX, typeof width);
-                //fillRect(leftUpX, leftUpY, width, height);
-                /*console.log("kontrola nanovoooo");
-
-                console.log("lava hore x" + leftUpX, typeof leftUpX);
-                console.log("lava hore y" + leftUpY, typeof leftUpY);
-                console.log("prava dole x" + RightDownX, typeof RightDownX);
-                console.log("prava dole y" + RightDownY, typeof RightDownY);
-                console.log("sirka" + width, typeof width);
-                console.log("vyska" + height, typeof height);*/
-
-               // document.getElementById("canvasOverVideo").style = false;
-                //document.getElementById("canvasOverVideo").style.top =height;
-
-
-               /* var c = document.getElementById("canvasOverVideo");
-                var ctx = c.getContext("2d");
-                ctx.fillRect(leftUpX, leftUpY, width, height);*/
-
             }
   
             e.preventDefault();
-           // videoElement.pause();
         }
-
 
         let SelectAreaClicked = function(e){
             leftUpClicked = 0;
@@ -223,16 +177,12 @@
             videoElement.addEventListener("click", handleClick, false);
             videoElement.pause();
             alert("Select upper left corner of subtitle area");
-            
         }
 
         let DeleteSubtitlesClicked = function(e){
             renderer.skript(leftUpX, leftUpY, RightDownX ,RightDownY, filePath, heightOfVideo, widthOfVideo);
-            alert("klikli sme")
-            //let python = spawn('python', [path.join(app.getAppPath()), '..', 'deletesubtitles_new.py']);
+            alert("Subtitles will be removed and the new video will be saved in the same directory as the uploaded video.")
         }
-
-
 
         SelectAreaButton.addEventListener("mousedown", SelectAreaClicked, false);
         DeleteSubtitlesButton.addEventListener("mousedown", DeleteSubtitlesClicked, false);

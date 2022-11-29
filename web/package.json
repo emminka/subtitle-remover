@@ -6,7 +6,8 @@
   "author": "Jane Doe",
   "license": "MIT",
   "devDependencies": {
-    "electron": "19.0.0"
+    "electron": "19.0.0",
+    "electron-packager": "^17.1.1"
   },
   "scripts": {
     "start": "electron ."
