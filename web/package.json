@@ -13,6 +13,8 @@
     "start": "electron ."
   },
   "dependencies": {
-    "python-shell": "^3.0.1"
+    "python-shell": "^3.0.1",
+    "toastify-js": "^1.12.0",
+    "toastr": "^2.1.4"
   }
 }

@@ -73,7 +73,8 @@
         }
 
     </style>
-
+    <link href="./toastr-master/build/toastr.css" rel="stylesheet"/>
+    <script src="./toastr-master/toastr.js"></script>
 </head>
 
 <body>
@@ -97,7 +98,7 @@
     const renderer = require('./renderer.js');
   </script>
     <script>    
-
+        
         let leftUpClicked = 0;
         let widthOfVideo = 0;
         let heightOfVideo = 0;
@@ -152,7 +153,25 @@
                 leftUpClicked = 1;
                 console.log("lava hore x" + leftUpX)
                 console.log("lava hore y" + leftUpY)
-                alert("Select down right corner of subtitle area");
+                toastr.options = {
+                    "closeButton": false,
+                    "debug": false,
+                    "newestOnTop": true,
+                    "progressBar": false,
+                    "positionClass": "toast-top-left",
+                    "preventDuplicates": false,
+                    "onclick": null,
+                    "showDuration": "300",
+                    "hideDuration": "1000",
+                    "timeOut": "5000",
+                    "extendedTimeOut": "1000",
+                    "showEasing": "swing",
+                    "hideEasing": "linear",
+                    "showMethod": "fadeIn",
+                    "hideMethod": "fadeOut"
+                    }
+                toastr["info"]("Please select down right corner of subtitles area.", "Down Right Corner")
+                //alert("Select down right corner of subtitle area");
             }
             else if (leftUpClicked == 1){
                 RightDownX = (e.clientX + window.pageXOffset);
@@ -199,7 +218,25 @@
             leftUpClicked = 0;
             videoElement.addEventListener("click", handleClick, false);
             videoElement.pause();
-            alert("Select upper left corner of subtitle area");
+            toastr.options = {
+                "closeButton": false,
+                "debug": false,
+                "newestOnTop": true,
+                "progressBar": false,
+                "positionClass": "toast-top-left",
+                "preventDuplicates": false,
+                "onclick": null,
+                "showDuration": "300",
+                "hideDuration": "1000",
+                "timeOut": "5000",
+                "extendedTimeOut": "1000",
+                "showEasing": "swing",
+                "hideEasing": "linear",
+                "showMethod": "fadeIn",
+                "hideMethod": "fadeOut"
+                }
+            toastr["info"]("Please select upper left corner of subtitles area.", "Upper Left Corner")
+            //alert("Select upper left corner of subtitle area");
         }
 
         let ControlsClicked = function(e){
@@ -215,7 +252,26 @@
 
         let DeleteSubtitlesClicked = function(e){
             renderer.skript(leftUpX, leftUpY, RightDownX ,RightDownY, filePath, heightOfVideo, widthOfVideo);
-            alert("Subtitles will be removed and the new video will be saved in the same directory as the uploaded video.")
+            toastr.options = {
+                "closeButton": false,
+                "debug": false,
+                "newestOnTop": true,
+                "progressBar": false,
+                "positionClass": "toast-top-left",
+                "preventDuplicates": false,
+                "onclick": null,
+                "showDuration": "300",
+                "hideDuration": "1000",
+                "timeOut": "10000",
+                "extendedTimeOut": "5000",
+                "showEasing": "swing",
+                "hideEasing": "linear",
+                "showMethod": "fadeIn",
+                "hideMethod": "fadeOut"
+                }
+            toastr.success("Subtitles are being removed and the new video will be saved in the same directory as the uploaded video.", "Removing subtitles")
+            
+            //alert("Subtitles will be removed and the new video will be saved in the same directory as the uploaded video.")
         }
 
         SelectAreaButton.addEventListener("mousedown", SelectAreaClicked, false);
