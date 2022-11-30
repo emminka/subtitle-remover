@@ -88,6 +88,7 @@
     <input id="file-upload" type="file" accept=".mp4" />
 
     <button type="button" id="SelectAreaButton" class="size_of_buttons" disabled>Select Area</button>
+    <button type="button" id="ControlsButton" class="size_of_buttons" disabled>Hide Controls</button>
     <button type="button" id="DeleteSubtitlesButton" class="size_of_buttons" disabled>Delete Subtitles</button>
 
 
@@ -106,18 +107,41 @@
         let RightDownY = 0;
         let videoElement = document.getElementById("uploadedVideo");
         let SelectAreaButton = document.getElementById("SelectAreaButton");
+        let ControlsButton = document.getElementById("ControlsButton");
         let DeleteSubtitlesButton = document.getElementById("DeleteSubtitlesButton");
         let filePath;
         let directoryPath;
+        let controls_showed = 0; //controls are not showwed
         
+        
+
+        $("#file-upload").change(onFileUpload);
+
+        let WannaHide = function(e){ //is now showed
+            console.log(controls_showed);
+            console.log("YEAH SME TU A SKRYVMAE PANEL");
+            $("video").attr("controls", false); //hide them
+            document.getElementById("ControlsButton").textContent  = 'Show Controls';
+            controls_showed = 0;
+            console.log(controls_showed);
+
+        }
+
+        let WannaShow = function(e){ //is now hide
+            console.log("Wanna show");
+            $("video").attr("controls", true); //show them
+            document.getElementById("ControlsButton").textContent  = 'Hide Controls';
+            controls_showed = 1;
+        }
+
         function onFileUpload(event) {
             filePath = $("#file-upload")[0].files[0].path;
             console.log(filePath);
             $("video").attr("src", filePath);
             document.getElementById("SelectAreaButton").disabled = false; //urobim tlacitko select area aktivne
+            document.getElementById("ControlsButton").disabled = false; //urobim tlacitko hide controls aktivne
+            WannaShow();
         }
-
-        $("#file-upload").change(onFileUpload);
 
 
         let handleClick = function(e) { 
@@ -133,12 +157,11 @@
             else if (leftUpClicked == 1){
                 RightDownX = (e.clientX + window.pageXOffset);
                 RightDownY = (e.clientY + window.pageXOffset);
-                $("video").attr("controls", true)
+                WannaShow();
                 console.log("prava dole x" + RightDownX)
                 console.log("prava dole y" + RightDownY)
                 console.log("sirka videa" + widthOfVideo)
                 console.log("vyska videa" + heightOfVideo)
-
 
                 console.log("no toto by malo fungovat:::::::")
                 heightOfVideo = $("video")[0].videoHeight; //vyska nahraneho videa
@@ -172,11 +195,22 @@
         }
 
         let SelectAreaClicked = function(e){
+            WannaHide();
             leftUpClicked = 0;
-            $("video").attr("controls", false);
             videoElement.addEventListener("click", handleClick, false);
             videoElement.pause();
             alert("Select upper left corner of subtitle area");
+        }
+
+        let ControlsClicked = function(e){
+            console.log("čo tu mame",controls_showed);
+            if (controls_showed === 0){ //controls are not showwed
+                console.log
+                WannaShow();
+            }
+            else if (controls_showed === 1){//controls are  showwed
+                WannaHide();
+            }
         }
 
         let DeleteSubtitlesClicked = function(e){
@@ -186,6 +220,7 @@
 
         SelectAreaButton.addEventListener("mousedown", SelectAreaClicked, false);
         DeleteSubtitlesButton.addEventListener("mousedown", DeleteSubtitlesClicked, false);
+        ControlsButton.addEventListener("mousedown", ControlsClicked, false);
     </script>
 </body>
 

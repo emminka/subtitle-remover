@@ -6,8 +6,10 @@ NEMAM
 -spojazdni si salbonmu
 -posli appku t.m.
 
+
 MAM	
 vyber miesto kde sa to ulozi - tam odkial sa zobralo video len sa zmeni nazov
+-men nazov az na poslednej bodke
 
 
 

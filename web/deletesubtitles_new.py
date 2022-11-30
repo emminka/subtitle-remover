@@ -54,7 +54,7 @@ if(xL is None or yL is None or xR is None or yR is None or filepath is None):
 video = cv2.VideoCapture(filepath)
 
 koncovka = "_no_subtitles.mp4"
-new_name_same_path = filepath.split(".", 1)[0];
+new_name_same_path = filepath.rsplit(".", 1)[0];
 new_name_same_path += koncovka;
 
 mask = np.zeros((heightOfVideo,widthOfVideo,3),np.uint8) #vykreslenie ciernje masky v rozmeroch videa
