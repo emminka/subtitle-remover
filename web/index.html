@@ -72,6 +72,14 @@
             display: none;
         }
 
+        div.absolute {
+            position: absolute;
+            top: 80px;
+            left: 0;
+            width: 200px;
+            height: 100px;
+            border: 1px solid #ff0000;
+        }
     </style>
     <link href="./toastr-master/build/toastr.css" rel="stylesheet"/>
     <script src="./toastr-master/toastr.js"></script>
@@ -79,9 +87,11 @@
 
 <body>
     
-    <video  id="uploadedVideo" controls src="" >
+    <video  id="uploadedVideo" controls src="" controlsList="nofullscreen" >
     </video>
 
+    <div id="subtitle_area" class="absolute" style="display: none;" ></div> 
+    
 
     <label for="file-upload" style="display: inline-block;">
         <button type="button" id="UploadVideoButton" class="size_of_buttons">Upload Video</button>
@@ -99,6 +109,8 @@
   </script>
     <script>    
         
+        let widthOfSubtArea = 0;
+        let heightOfSubtArea = 0;
         let leftUpClicked = 0;
         let widthOfVideo = 0;
         let heightOfVideo = 0;
@@ -164,7 +176,7 @@
                     "showDuration": "300",
                     "hideDuration": "1000",
                     "timeOut": "5000",
-                    "extendedTimeOut": "1000",
+                    "extendedTimeOut": "500",
                     "showEasing": "swing",
                     "hideEasing": "linear",
                     "showMethod": "fadeIn",
@@ -176,6 +188,8 @@
             else if (leftUpClicked == 1){
                 RightDownX = (e.clientX + window.pageXOffset);
                 RightDownY = (e.clientY + window.pageXOffset);
+                //document.getElementById("subtitle_area").style.display = "inline" ;
+                
                 WannaShow();
                 console.log("prava dole x" + RightDownX)
                 console.log("prava dole y" + RightDownY)
@@ -192,6 +206,20 @@
                 console.log("vysoka app", heightOfVideoInApp)
                 console.log("siroka app", widthOfVideoInApp);
 
+                
+                widthOfSubtArea = Math.abs(RightDownX - leftUpX);
+                heightOfSubtArea = Math.abs(leftUpY - RightDownY);
+
+                console.log("sirka" + widthOfSubtArea)
+                console.log("vyska" + heightOfSubtArea)
+                //zobrazim ramcek kde su titulky
+
+                $('div.absolute').css('top', leftUpY);
+                $('div.absolute').css('left', leftUpX);
+                $('div.absolute').css('width', widthOfSubtArea);
+                $('div.absolute').css('height', heightOfSubtArea);
+                $("#subtitle_area").show();
+
                 //prepocitanie pomerovo ked je video male (nezvacsene)
                 //-8 kvoli ramceku ktory je okolo video
 
@@ -199,6 +227,8 @@
                 leftUpY = Math.round(-8 +(leftUpY/heightOfVideoInApp)*heightOfVideo)
                 RightDownX = Math.round(-8 +(RightDownX/widthOfVideoInApp) * widthOfVideo)
                 RightDownY = Math.round(-8 +(RightDownY/heightOfVideoInApp)*heightOfVideo)
+
+                
 
                 console.log("CISLA PO NOVOM")
                 console.log("prava dole x" + RightDownX)
@@ -208,6 +238,7 @@
 
                 leftUpClicked = 2;
                 document.getElementById("DeleteSubtitlesButton").disabled = false; //urobim tlacitko delete subtitles aktivne
+
             }
   
             e.preventDefault();
@@ -229,7 +260,7 @@
                 "showDuration": "300",
                 "hideDuration": "1000",
                 "timeOut": "5000",
-                "extendedTimeOut": "1000",
+                "extendedTimeOut": "500",
                 "showEasing": "swing",
                 "hideEasing": "linear",
                 "showMethod": "fadeIn",
