@@ -51,6 +51,8 @@
             width: auto;
             height: 500px;
             margin-bottom: 25px;
+            user-drag: none;
+            user-select: none;
             /*position: fixed;*/
             /*top: 0;
             left: 0;*/          
@@ -321,6 +323,54 @@
         SelectAreaButton.addEventListener("mousedown", SelectAreaClicked, false);
         DeleteSubtitlesButton.addEventListener("mousedown", DeleteSubtitlesClicked, false);
         ControlsButton.addEventListener("mousedown", ControlsClicked, false);
+
+        // draggable dots around subtitle area
+        let currentlyDraggedDot = null;
+
+        function startDragTL(e) {
+            currentlyDraggedDot = "TL";
+        }
+
+        function dragTL(e) {
+            if (currentlyDraggedDot == "TL") {
+                $("#subtitle_area").css("left", e.x);
+                $("#subtitle_area").css("top", e.y);
+            }
+        }
+
+        function stopDragBR(e) {
+            currentlyDraggedDot = null;
+        }
+
+        function startDragBR(e) {
+            currentlyDraggedDot = "BR";
+            console.log("Start");
+        }
+        
+        function dragBR(e) {
+            console.log("Drag", currentlyDraggedDot);
+            if (currentlyDraggedDot == "BR") {
+                const sbLeft = parseInt($("#subtitle_area").css("left"), 10);
+                const sbTop = parseInt($("#subtitle_area").css("top"), 10);
+                
+                $("#subtitle_area").css("width", e.x - sbLeft);
+                $("#subtitle_area").css("height", e.y - sbTop);
+
+                console.log("Som tu", sbLeft, sbTop, e.x, e.y)
+            }
+        }
+
+        function stopDragTL(e) {
+            currentlyDraggedDot = null;
+        }
+
+        document.getElementById("anchor-TL").addEventListener("mousedown", startDragTL);
+        document.body.addEventListener("mousemove", dragTL);
+        document.body.addEventListener("mouseup", stopDragTL);
+
+        document.getElementById("anchor-BR").addEventListener("mousedown", startDragBR);
+        document.body.addEventListener("mousemove", dragBR);
+        document.body.addEventListener("mouseup", stopDragBR);
     </script>
 </body>
 
