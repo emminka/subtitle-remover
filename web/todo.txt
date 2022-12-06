@@ -1,10 +1,12 @@
 NEMAM
 -vygenerogvane video vela miesta berie- cv2 video writer compression googli
 -uprav framy videa - HM TO NEVIEM čO SOM TYM MYSLELA *confused* - hm aha asi uz viem že nie každe video ma rovnaky počet framov, tak posileaj si aj to do skriptu
--natahovanie miesta kde su titulenky
 -posli appku t.m.
 -daj toast nalavo
 -uprav console logy aby neboli retardovane
+-spoj zvuk s videom lebo inak je vysledok na dve veci
+-je tam asi mala pixelova odchylka
+-tlacitka su sisimisi ked zmenis velkost appky/ked das ctrl shift i
 
 MAM	
 -vyber miesto kde sa to ulozi - tam odkial sa zobralo video len sa zmeni nazov
@@ -13,6 +15,7 @@ MAM
 -odlznik na urcenie kde titutle
 -spojazdni si salbonmu
 -toast notification namiesto alert
+-natahovanie miesta kde su titulenky
 
 ZDROJE:
 https://github.com/codeseven/toastr na toast notifiidkakckiu
