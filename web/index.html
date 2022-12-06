@@ -237,12 +237,12 @@
 
                 //prepocitanie pomerovo ked je video male (nezvacsene)
                 //-8 kvoli ramceku ktory je okolo video
-
+                /*
                 leftUpX = Math.round(-8 +(leftUpX/widthOfVideoInApp) * widthOfVideo)
                 leftUpY = Math.round(-8 +(leftUpY/heightOfVideoInApp)*heightOfVideo)
                 RightDownX = Math.round(-8 +(RightDownX/widthOfVideoInApp) * widthOfVideo)
                 RightDownY = Math.round(-8 +(RightDownY/heightOfVideoInApp)*heightOfVideo)
-
+                */
                 
 
                 console.log("CISLA PO NOVOM")
@@ -297,6 +297,21 @@
         }
 
         let DeleteSubtitlesClicked = function(e){
+            var area_to_be_deleted = document.getElementById("subtitle_area").getBoundingClientRect();
+            console.log(area_to_be_deleted.top, area_to_be_deleted.right, area_to_be_deleted.bottom, area_to_be_deleted.left);
+
+            leftUpX = area_to_be_deleted.left;
+            leftUpY = area_to_be_deleted.top;
+            RightDownX = area_to_be_deleted.right;
+            RightDownY = area_to_be_deleted.bottom;
+
+            leftUpX = Math.round(-8 +(leftUpX/widthOfVideoInApp) * widthOfVideo)
+            leftUpY = Math.round(-8 +(leftUpY/heightOfVideoInApp)*heightOfVideo)
+            RightDownX = Math.round(-8 +(RightDownX/widthOfVideoInApp) * widthOfVideo)
+            RightDownY = Math.round(-8 +(RightDownY/heightOfVideoInApp)*heightOfVideo)
+
+
+
             renderer.skript(leftUpX, leftUpY, RightDownX ,RightDownY, filePath, heightOfVideo, widthOfVideo);
             toastr.options = {
                 "closeButton": false,
