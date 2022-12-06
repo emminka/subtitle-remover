@@ -81,6 +81,15 @@
             border: 2px solid #DCD0FF;
             background-color:rgba(155, 139, 139, 0.226);
         }
+
+        div.anchor {
+            width: 10px;
+            height: 10px;
+            background-color: crimson;
+            position: absolute;
+            border: 0;
+            border-radius: 5px;
+        }
     </style>
     <link href="./toastr-master/build/toastr.css" rel="stylesheet"/>
     <script src="./toastr-master/toastr.js"></script>
@@ -91,7 +100,10 @@
     <video  id="uploadedVideo" controls src="" controlsList="nofullscreen" >
     </video>
 
-    <div id="subtitle_area" class="absolute" style="display: none;" ></div> 
+    <div id="subtitle_area" class="absolute" style="display: none;" >
+        <div id="anchor-TL" class="anchor" style="left: -5px; top: -5px;"></div>
+        <div id="anchor-BR" class="anchor" style="right: -5px; bottom: -5px;"></div>
+    </div> 
     
 
     <label for="file-upload" style="display: inline-block;">
