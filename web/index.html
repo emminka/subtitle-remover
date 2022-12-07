@@ -104,9 +104,7 @@
 
     <div id="subtitle_area" class="absolute" style="display: none;" >
         <div id="anchor-TL" class="anchor" style="left: -3px; top: -3px;"></div>
-        <div id="anchor-TR" class="anchor" style="right: -3px; top: -3px;"></div>
         <div id="anchor-BR" class="anchor" style="right: -3px; bottom: -3px;"></div>
-        <div id="anchor-BL" class="anchor" style="left: -3px; bottom: -3px;"></div>
     </div> 
     
 
@@ -384,6 +382,7 @@
         }
 
         
+        
 
         document.getElementById("anchor-TL").addEventListener("mousedown", startDragTL);
         document.body.addEventListener("mousemove", dragTL);
@@ -392,6 +391,8 @@
         document.getElementById("anchor-BR").addEventListener("mousedown", startDragBR);
         document.body.addEventListener("mousemove", dragBR);
         document.body.addEventListener("mouseup", stopDragBR);
+
+
     </script>
 </body>
 
