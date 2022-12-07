@@ -85,9 +85,9 @@
         }
 
         div.anchor {
-            width: 10px;
-            height: 10px;
-            background-color: crimson;
+            width: 6px;
+            height: 6px;
+            background-color: #b7a6eb;
             position: absolute;
             border: 0;
             border-radius: 5px;
@@ -103,8 +103,10 @@
     </video>
 
     <div id="subtitle_area" class="absolute" style="display: none;" >
-        <div id="anchor-TL" class="anchor" style="left: -5px; top: -5px;"></div>
-        <div id="anchor-BR" class="anchor" style="right: -5px; bottom: -5px;"></div>
+        <div id="anchor-TL" class="anchor" style="left: -3px; top: -3px;"></div>
+        <div id="anchor-TR" class="anchor" style="right: -3px; top: -3px;"></div>
+        <div id="anchor-BR" class="anchor" style="right: -3px; bottom: -3px;"></div>
+        <div id="anchor-BL" class="anchor" style="left: -3px; bottom: -3px;"></div>
     </div> 
     
 
@@ -342,6 +344,7 @@
         // draggable dots around subtitle area
         let currentlyDraggedDot = null;
 
+        //TL = top left
         function startDragTL(e) {
             currentlyDraggedDot = "TL";
         }
@@ -353,6 +356,11 @@
             }
         }
 
+        function stopDragTL(e) {
+            currentlyDraggedDot = null;
+        }
+        
+        //BR = bottom right
         function stopDragBR(e) {
             currentlyDraggedDot = null;
         }
@@ -375,9 +383,7 @@
             }
         }
 
-        function stopDragTL(e) {
-            currentlyDraggedDot = null;
-        }
+        
 
         document.getElementById("anchor-TL").addEventListener("mousedown", startDragTL);
         document.body.addEventListener("mousemove", dragTL);
