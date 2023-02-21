@@ -6,6 +6,7 @@ import time
 import sys
 import getopt
 import matplotlib.pyplot as plt
+from moviepy.editor import VideoFileClip, AudioFileClip, concatenate_videoclips
 
 xL = None #suradnice z aplikacie
 yL = None
@@ -52,20 +53,24 @@ if(xL is None or yL is None or xR is None or yR is None or filepath is None):
 
 
 video = cv2.VideoCapture(filepath)
+fpska = video.get(cv2.CAP_PROP_FPS)
 
 koncovka = "_no_subtitles.mp4"
 new_name_same_path = filepath.rsplit(".", 1)[0];
 new_name_same_path += koncovka;
 
+koncovka1 = "_noSUB_yesSOUND.mp4"
+new_name_same_path1 = filepath.rsplit(".", 1)[0];
+new_name_same_path1 += koncovka1;
+
 mask = np.zeros((heightOfVideo,widthOfVideo,3),np.uint8) #vykreslenie ciernje masky v rozmeroch videa
 
-output = cv2.VideoWriter(new_name_same_path, -1, 30.0, (widthOfVideo,heightOfVideo)) #vysledne video
+output = cv2.VideoWriter(new_name_same_path, -1, fpska, (widthOfVideo,heightOfVideo)) #vysledne video
 
 cv2.rectangle(mask, (xL, yL), (xR, yR),(255,255,255), -1) #-1 for filled shape
 
 gray_mask = cv2.cvtColor(mask, cv2.COLOR_BGR2GRAY) #na premalovanie lebo inak sa to nevysvetlitelne stazuje
 	
-#cv2.imshow('image', mask)
 
 if (video.isOpened()== False): 
     print("Error opening video file")
@@ -84,7 +89,16 @@ while(video.isOpened()):
     else: 
         break
 #video.release()
+
 cv2.destroyAllWindows()
+
 output.release()
+
+audio_clip = AudioFileClip(filepath)   #audio ziskavam lebo cv2 nepouziva
+modified_clip = VideoFileClip(new_name_same_path)
+final_clip = modified_clip.set_audio(audio_clip)
+final_clip.write_videofile(new_name_same_path1)
+
+
 print("Video has been released.")
 
