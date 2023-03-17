@@ -1,104 +1,11 @@
 
-FRAME 1 Z 376
-nevermind
-george
+FRAME 1 Z 3
+ind
+neverm
+georgeo
+the
 fruit
 choose
-the
-can
 you
-
-FRAME 31 Z 376
-nevermind
-fruit
-george
-the
-choose
 can
-you
-
-FRAME 61 Z 376
-nevermind
-george
-fruit
-the
-choose
-can
-you
-
-FRAME 91 Z 376
-
-FRAME 121 Z 376
-fruity
-where
-is
-the
-
-FRAME 151 Z 376
-
-FRAME 181 Z 376
-over
-there
-co
-
-FRAME 211 Z 376
-
-FRAME 241 Z 376
-and
-and
-here
-and
-bananas
-big
-apples
-melor
-very
-oranges
-are
-a
-
-FRAME 271 Z 376
-e
-here
-and
-and
-bananas
-and
-big
-apples
-meloi
-very
-are
-oranges
-a
-
-FRAME 301 Z 376
-here
-and
-and
-bananas
-and
-big
-appless
-melor
-oranges
-very
-are
-a
-
-FRAME 331 Z 376
-here
-and
-and
-bananas
-and
-big
-apples
-meloi
-very
-oranges
-are
-a
-
-FRAME 361 Z 376
-5o
+o

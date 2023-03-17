@@ -11,6 +11,8 @@ from moviepy.editor import VideoFileClip, AudioFileClip, concatenate_videoclips
 import matplotlib.pyplot as plt
 import keras_ocr
 
+
+
 xL = None #suradnice z aplikacie
 yL = None
 xR = None
@@ -57,11 +59,8 @@ if(xL is None or yL is None or xR is None or yR is None or filepath is None or h
     print("dovidopo exitujeeme ,daco  je plano")
     sys.exit(1)
 
-
-video = cv2.VideoCapture(filepath)
 pipeline = keras_ocr.pipeline.Pipeline()
 f = open('output.txt','w') #zapisujem ake su titulky
-poleObrazkov = []
 fpska = int(video.get(cv2.CAP_PROP_FRAME_COUNT)) #pocet framov celeho video
 video = cv2.VideoCapture(filepath)
 #fpska = video.get(cv2.CAP_PROP_FPS)
@@ -71,9 +70,6 @@ count = 0
 cislo_frame = 1
 images = []
 
-dolna_tretina_vyska =int(2*(heightOfVideo/3))
-prva_desatina_sirky=int(widthOfVideo/10)
-posledna_desatina_sirky=int(9*(widthOfVideo/10))
 
 koncovka = "_noSUB_noSOUND.mp4"
 new_name_same_path = filepath.rsplit(".", 1)[0];
@@ -93,42 +89,10 @@ cv2.rectangle(mask, (xL, yL), (xR, yR),(255,255,255), -1) #-1 for filled shape
 gray_mask = cv2.cvtColor(mask, cv2.COLOR_BGR2GRAY) #na premalovanie lebo inak sa to nevysvetlitelne stazuje
 
 
-
-if (video.isOpened()== False): 
-    print("Error opening video file")
-
-while(video.isOpened()):
-    # Capture frame-by-frame
-    ret, frame = video.read()
-    if ret == True:
-        # Press Q on keyboard to  exit
-        if cv2.waitKey(30) & 0xFF == ord('q'):
-            break
-        no_subtitles_frame = cv2.inpaint(frame,gray_mask,3,cv2.INPAINT_TELEA) #pomocou inpaint odstranujem (iba zamazavam) titulky
-        output.write(no_subtitles_frame)
-        # Display the resulting frame
-        # cv2.imshow('Frame', dst)   
-    else: 
-        break
-#video.release()
-
-cv2.destroyAllWindows()
-
-output.release()
-
-audio_clip = AudioFileClip(filepath)   #audio ziskavam lebo cv2 nepouziva
-modified_clip = VideoFileClip(new_name_same_path)
-final_clip = modified_clip.set_audio(audio_clip)
-final_clip.write_videofile(new_name_same_path1)
-os.remove(new_name_same_path)
-
-
-print("Video has been released.")
-
 if methodOfRemoving == 1: #pouzivame keras
     while success:
         if(count<8):
-            image = image[yL:yR,xL:xR]  #orazena image, od:do a od:do
+            image = image[dolna_tretina_vyska:height,prva_desatina_sirky:posledna_desatina_sirky]  #orazena image, od:do a od:do
             cv2.imwrite("frame%d.jpg" % count, image)     # save frame as JPEG file 
             poleObrazkov.append(r'C:\Users\Emma\Desktop\Bakalarka\web\frame%d.jpg' % count)
             print(poleObrazkov)
@@ -169,5 +133,35 @@ if methodOfRemoving == 1: #pouzivame keras
                 with open('output.txt', 'a') as f:
                     print(text, file=f)
 
-	
+
+if (video.isOpened()== False): 
+    print("Error opening video file")
+
+while(video.isOpened()):
+    # Capture frame-by-frame
+    ret, frame = video.read()
+    if ret == True:
+        # Press Q on keyboard to  exit
+        if cv2.waitKey(30) & 0xFF == ord('q'):
+            break
+        no_subtitles_frame = cv2.inpaint(frame,gray_mask,3,cv2.INPAINT_TELEA) #pomocou inpaint odstranujem (iba zamazavam) titulky
+        output.write(no_subtitles_frame)
+        # Display the resulting frame
+        # cv2.imshow('Frame', dst)   
+    else: 
+        break
+#video.release()
+
+cv2.destroyAllWindows()
+
+output.release()
+
+audio_clip = AudioFileClip(filepath)   #audio ziskavam lebo cv2 nepouziva
+modified_clip = VideoFileClip(new_name_same_path)
+final_clip = modified_clip.set_audio(audio_clip)
+final_clip.write_videofile(new_name_same_path1)
+os.remove(new_name_same_path)
+
+
+print("Video has been released.")
 
