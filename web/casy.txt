@@ -1,0 +1,28 @@
+serial s 107559 snimkami (59min a 48sek)
+-6024 framov za 495minut a 49sek. (8,25hod)
+-8 framov za cca 39sekund
+-1 frame za cca 5sekund
+-predpoklad 107559fr za 8 838min (147hod -> 6dni)
+
+serial s 107559 snimkami (59min a 48sek) 
+KAŽDY 30TY FRAME
+-10051 framov za 29,5min (realne 336 framov)
+-240 framov (realne 8 framov) za cca 42sekund
+-predpoklad 107559fr za 315,7min (5,25hod)
+
+serial s 107559 snimkami (59min a 48sek), OREZANE
+KAŽDY 30TY FRAME
+-23011 framov za 20,75min (realne 767 framov)
+-240 framov (realne 8 framov) za cca 12,6sekund
+-predpoklad 107559fr za 97min (1,6hod)
+
+video pepa 15sekundove
+-376 framov za 54min a 12sek
+-8framov za 69sekund
+-1frame za 8,6sekundy
+
+video pepa 15 skeundove, každy 30ty frame
+-376 framov za 2min a 2sek (realne 13 framov)
+
+video pepa 15 skeundove, každy 30ty frame, orezane
+-376 framov za 59,5sek (realne 13 framov)

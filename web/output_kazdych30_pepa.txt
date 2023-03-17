@@ -1,0 +1,107 @@
+
+FRAME 1 Z 376
+ske
+s
+nevermind
+george
+fruit
+choose
+the
+you
+can
+
+FRAME 31 Z 376
+s
+nevermind
+fruit
+george
+choose
+the
+you
+can
+
+FRAME 61 Z 376
+e
+nevermind
+fruit
+george
+choose
+the
+you
+can
+
+FRAME 91 Z 376
+s
+
+FRAME 121 Z 376
+s
+
+FRAME 151 Z 376
+s
+
+FRAME 181 Z 376
+c
+over
+thereo
+
+FRAME 211 Z 376
+
+FRAME 241 Z 376
+there
+and
+and
+and
+big
+apples
+bananas
+melon
+a
+very
+are
+oranges
+
+FRAME 271 Z 376
+there
+and
+big
+melon
+apples
+and
+and
+bananas
+very
+are
+oranges
+a
+
+FRAME 301 Z 376
+there
+and
+and
+bananas
+big
+apples
+and
+melono
+are
+oranges
+a
+very
+
+FRAME 331 Z 376
+there
+and
+and
+and
+big
+apples
+bananas
+melon
+very
+are
+oranges
+a
+
+FRAME 361 Z 376
+ry
+ocon

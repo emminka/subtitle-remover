@@ -48,15 +48,28 @@
 
         video {
             display: block;
+            float: left;
             width: auto;
             height: 500px;
             margin-bottom: 25px;
             user-drag: none;
             user-select: none;
+            margin-right: 10px;
             /*position: fixed;*/
             /*top: 0;
             left: 0;*/          
         }
+
+        select {
+            width: 100px;
+            height: 30px;
+            margin-top: 5px;
+            }
+        
+        label {
+			display: block;
+			margin-bottom: 10px;
+		}
 
         .canvas {
             position: absolute;
@@ -91,6 +104,9 @@
             position: absolute;
             border: 0;
             border-radius: 5px;
+
+        
+
         }
     </style>
     <link href="./toastr-master/build/toastr.css" rel="stylesheet"/>
@@ -98,15 +114,21 @@
 </head>
 
 <body>
-    
+    <div style="display:flex;">   
     <video  id="uploadedVideo" controls src="" controlsList="nofullscreen" >
     </video>
+
+    <label for="optionss">Spôsob odstránenia</label><br>
+    <select id="optionss">
+			<option id="defalut_remove">Default</option>
+			<option id="kerasss">Keras</option>
+		</select>
+    </div>
 
     <div id="subtitle_area" class="absolute" style="display: none;" >
         <div id="anchor-TL" class="anchor" style="left: -3px; top: -3px;"></div>
         <div id="anchor-BR" class="anchor" style="right: -3px; bottom: -3px;"></div>
     </div> 
-    
 
     <label for="file-upload" style="display: inline-block;">
         <button type="button" id="UploadVideoButton" class="size_of_buttons">Upload Video</button>
@@ -116,7 +138,6 @@
     <button type="button" id="SelectAreaButton" class="size_of_buttons" disabled>Select Area</button>
     <button type="button" id="ControlsButton" class="size_of_buttons" disabled>Hide Controls</button>
     <button type="button" id="DeleteSubtitlesButton" class="size_of_buttons" disabled>Delete Subtitles</button>
-
 
    <canvas id="canvasOverVideo" class="canvas" style="display: none;"></canvas>
    <script>
@@ -140,6 +161,7 @@
         let filePath;
         let directoryPath;
         let controls_showed = 0; //controls are not showwed
+        let sposob_odstranenia = 0; //0 je default, 1 je keras
         
         
 
@@ -171,6 +193,13 @@
             WannaShow();
         }
 
+        function getValueofSelect() {
+            sposob_odstranenia = document.getElementById("optionss").selectedIndex;
+
+            console.log("Vybraná možnosť je: " + sposob_odstranenia);
+        }
+
+        document.getElementById("optionss").onchange = getValueofSelect;
 
         let handleClick = function(e) { 
 
@@ -305,10 +334,10 @@
             RightDownX = area_to_be_deleted.right;
             RightDownY = area_to_be_deleted.bottom;
 
-            leftUpX = Math.round(-8 +(leftUpX/widthOfVideoInApp) * widthOfVideo)
-            leftUpY = Math.round(-8 +(leftUpY/heightOfVideoInApp)*heightOfVideo)
-            RightDownX = Math.round(-8 +(RightDownX/widthOfVideoInApp) * widthOfVideo)
-            RightDownY = Math.round(-8 +(RightDownY/heightOfVideoInApp)*heightOfVideo)
+            leftUpX = Math.round(-8 -2 -10 +(leftUpX/widthOfVideoInApp) * widthOfVideo) //preisottu o kusok viac pielov, 8 je kvoli umiwstnneniu videa
+            leftUpY = Math.round(-8 - 2 - 10 +(leftUpY/heightOfVideoInApp)*heightOfVideo)
+            RightDownX = Math.round(-8 - 2+ (RightDownX/widthOfVideoInApp) * widthOfVideo)
+            RightDownY = Math.round(- 8 - 2 + (RightDownY/heightOfVideoInApp)*heightOfVideo)
 
 
 
