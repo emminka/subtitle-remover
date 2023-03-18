@@ -1,11 +1,102 @@
 
-FRAME 1 Z 3
-ind
-neverm
-georgeo
-the
+FRAME 1 Z 25.0
+nevermind
+george
 fruit
+the
 choose
 you
 can
+
+FRAME 31 Z 25.0
+nevermind
+fruit
+george
+the
+choose
+you
+can
+
+FRAME 61 Z 25.0
+nevermind
+george
+fruit
+the
+choose
+you
+can
+
+FRAME 91 Z 25.0
+
+FRAME 121 Z 25.0
+where
+is
+the
+fruity
+
+FRAME 151 Z 25.0
+
+FRAME 181 Z 25.0
+over
+there
 o
+
+FRAME 211 Z 25.0
+
+FRAME 241 Z 25.0
+and
+there
+and
+and
+big
+apples
+bananas
+melon
+are
+oranges
+very
+a
+
+FRAME 271 Z 25.0
+and
+and
+and
+big
+there
+apples
+bananas
+melon
+oranges
+very
+are
+a
+
+FRAME 301 Z 25.0
+and
+and
+and
+big
+there
+apples
+bananas
+melon
+very
+are
+orangess
+a
+
+FRAME 331 Z 25.0
+and
+and
+and
+big
+there
+bananas
+apples
+melon
+oranges
+very
+are
+a
+
+FRAME 361 Z 25.0

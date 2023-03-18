@@ -8,7 +8,6 @@ import sys
 import getopt
 import matplotlib.pyplot as plt
 from moviepy.editor import VideoFileClip, AudioFileClip, concatenate_videoclips
-import matplotlib.pyplot as plt
 import keras_ocr
 
 xL = None #suradnice z aplikacie
@@ -59,21 +58,19 @@ if(xL is None or yL is None or xR is None or yR is None or filepath is None or h
 
 
 video = cv2.VideoCapture(filepath)
+fpska = video.get(cv2.CAP_PROP_FPS)
+
 pipeline = keras_ocr.pipeline.Pipeline()
 f = open('output.txt','w') #zapisujem ake su titulky
 poleObrazkov = []
-fpska = int(video.get(cv2.CAP_PROP_FRAME_COUNT)) #pocet framov celeho video
+#fpska = int(video.get(cv2.CAP_PROP_FRAME_COUNT)) #pocet framov celeho video
 video = cv2.VideoCapture(filepath)
+videocap = cv2.VideoCapture(filepath)
 #fpska = video.get(cv2.CAP_PROP_FPS)
 counting_frames = 1
-success,image = video.read()
 count = 0
 cislo_frame = 1
 images = []
-
-dolna_tretina_vyska =int(2*(heightOfVideo/3))
-prva_desatina_sirky=int(widthOfVideo/10)
-posledna_desatina_sirky=int(9*(widthOfVideo/10))
 
 koncovka = "_noSUB_noSOUND.mp4"
 new_name_same_path = filepath.rsplit(".", 1)[0];
@@ -91,8 +88,7 @@ output = cv2.VideoWriter(new_name_same_path, -1, fpska, (widthOfVideo,heightOfVi
 cv2.rectangle(mask, (xL, yL), (xR, yR),(255,255,255), -1) #-1 for filled shape
 
 gray_mask = cv2.cvtColor(mask, cv2.COLOR_BGR2GRAY) #na premalovanie lebo inak sa to nevysvetlitelne stazuje
-
-
+	
 
 if (video.isOpened()== False): 
     print("Error opening video file")
@@ -125,7 +121,9 @@ os.remove(new_name_same_path)
 
 print("Video has been released.")
 
+
 if methodOfRemoving == 1: #pouzivame keras
+    success,image = videocap.read()
     while success:
         if(count<8):
             image = image[yL:yR,xL:xR]  #orazena image, od:do a od:do
@@ -133,8 +131,8 @@ if methodOfRemoving == 1: #pouzivame keras
             poleObrazkov.append(r'C:\Users\Emma\Desktop\Bakalarka\web\frame%d.jpg' % count)
             print(poleObrazkov)
             cislo_frame += 30 # i.e. at 30 fps, this advances one second
-            video.set(cv2.CAP_PROP_POS_FRAMES, cislo_frame)
-            success,image = video.read()
+            videocap.set(cv2.CAP_PROP_POS_FRAMES, cislo_frame)
+            success,image = videocap.read()
         else:
             images = [keras_ocr.tools.read(img) for img in poleObrazkov]
             prediction_groups = pipeline.recognize(images)
@@ -146,15 +144,12 @@ if methodOfRemoving == 1: #pouzivame keras
                 for text, box in prediction_groups[x]:
                     with open('output.txt', 'a') as f:
                         print(text, file=f)
-
             count = -1
             poleObrazkov = []
             images = []
             prediction_groups = []
-
         print('Read a new frame: ', success)
         count += 1
-
     if not poleObrazkov:
         print("Pole obr prazdne,nerobime nic")
     else:
@@ -168,6 +163,4 @@ if methodOfRemoving == 1: #pouzivame keras
             for text, box in prediction_groups[x]:
                 with open('output.txt', 'a') as f:
                     print(text, file=f)
-
-	
 

@@ -1,1 +1,5 @@
-python ./deletesubtitles_new.py  -a -b -c -d -e -f -g -h
+python ./deletesubtitles_new.py  -a 186 -b 450 -c 737 -d 488 -e "C:\Users\Emma\Desktop\Bakalarka\videos\videa_bakalarka\fr3.mp4" -f 1080 -g 1920 -h 0
+
+funguje pohode nad tymto
+
+
