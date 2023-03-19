@@ -1,6 +1,6 @@
 const { app, BrowserWindow } = require('electron')
 const path = require('path')
-
+const log = require('electron-log')
 
 /*
 const {PythonShell} = require('python-shell');

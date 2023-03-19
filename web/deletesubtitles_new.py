@@ -9,6 +9,7 @@ import getopt
 import matplotlib.pyplot as plt
 from moviepy.editor import VideoFileClip, AudioFileClip, concatenate_videoclips
 import keras_ocr
+from difflib import SequenceMatcher
 
 xL = None #suradnice z aplikacie
 yL = None
@@ -58,12 +59,12 @@ if(xL is None or yL is None or xR is None or yR is None or filepath is None or h
 
 
 video = cv2.VideoCapture(filepath)
-fpska = video.get(cv2.CAP_PROP_FPS)
+fpska = video.get(cv2.CAP_PROP_FPS) #pocet fps za sekundu
 
 pipeline = keras_ocr.pipeline.Pipeline()
 f = open('output.txt','w') #zapisujem ake su titulky
 poleObrazkov = []
-#fpska = int(video.get(cv2.CAP_PROP_FRAME_COUNT)) #pocet framov celeho video
+fps_total = int(video.get(cv2.CAP_PROP_FRAME_COUNT)) #pocet framov celeho video
 video = cv2.VideoCapture(filepath)
 videocap = cv2.VideoCapture(filepath)
 #fpska = video.get(cv2.CAP_PROP_FPS)
@@ -71,6 +72,10 @@ counting_frames = 1
 count = 0
 cislo_frame = 1
 images = []
+
+text_aktual = []
+text_predch = []
+
 
 koncovka = "_noSUB_noSOUND.mp4"
 new_name_same_path = filepath.rsplit(".", 1)[0];
@@ -139,11 +144,28 @@ if methodOfRemoving == 1: #pouzivame keras
             for x in range(len(images)):
                 with open('output.txt', 'a') as f:
                     print("",file=f)
-                    print("FRAME",counting_frames,"Z", fpska, file=f)
+                    print("FRAME",counting_frames,"Z", fps_total, file=f)
                 counting_frames = counting_frames + 30
                 for text, box in prediction_groups[x]:
+                    text_aktual.append(text)
                     with open('output.txt', 'a') as f:
                         print(text, file=f)
+
+                s = SequenceMatcher(None, text_aktual, text_predch)
+                similarity = s.ratio()
+
+                if((counting_frames-30) != 1):
+                    print((counting_frames -60)," je",text_predch,"a", (counting_frames - 30), "je", text_aktual)
+                    if similarity >= 0.6:
+                        print("Text sa zhoduje alebo je veľmi podobný.")
+                    else:
+                        print("Text sa nezhoduje.")
+
+                    text_predch = text_aktual
+                    text_aktual = []
+                else:
+                    text_predch = text_aktual
+                    text_aktual = []
             count = -1
             poleObrazkov = []
             images = []
@@ -158,9 +180,25 @@ if methodOfRemoving == 1: #pouzivame keras
         for x in range(len(images)):
             with open('output.txt', 'a') as f:
                 print("",file=f)
-                print("FRAME",counting_frames,"Z", fpska, file=f)
+                print("FRAME",counting_frames,"Z", fps_total, file=f)
             counting_frames = counting_frames + 30
             for text, box in prediction_groups[x]:
+                text_aktual.append(text)
                 with open('output.txt', 'a') as f:
                     print(text, file=f)
 
+            s = SequenceMatcher(None, text_aktual, text_predch)
+            similarity = s.ratio()
+
+            if((counting_frames-30) != 1):
+                print((counting_frames -60)," je",text_predch,"a", (counting_frames - 30), "je", text_aktual)
+                if similarity >= 0.6:
+                    print("Text sa zhoduje alebo je veľmi podobný.")
+                else:
+                    print("Text sa nezhoduje.")
+
+                text_predch = text_aktual
+                text_aktual = []
+            else:
+                text_predch = text_aktual
+                text_aktual = []

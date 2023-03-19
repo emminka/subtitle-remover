@@ -4,6 +4,8 @@ import keras_ocr
 import os
 import time
 import sys
+from difflib import SequenceMatcher
+
 # keras-ocr will automatically download pretrained
 # weights for the detector and recognizer.
 
@@ -14,6 +16,8 @@ filepath =  r'C:\Users\Emma\Desktop\Bakalarka\videos\videa_bakalarka\titulky.mp4
 f = open('output.txt','w')
 
 poleObrazkov = []
+text_aktual = []
+text_predch = []
 
 video = cv2.VideoCapture(filepath)
 
@@ -46,8 +50,23 @@ while success:
                 print("FRAME",counting_frames,"Z", fpska, file=f)
             counting_frames = counting_frames + 30
             for text, box in prediction_groups[x]:
+                text_aktual.append(text)
                 with open('output.txt', 'a') as f:
                     print(text, file=f)
+
+            s = SequenceMatcher(None, text_aktual, text_predch)
+            similarity = s.ratio()
+
+            if((counting_frames-30) != 1):
+                print("porovnavam", (counting_frames -60) , "a ", (counting_frames - 30))
+                print("predch je",text_predch,"akutal je", text_aktual)
+                if similarity >= 0.7:
+                    print("Text sa zhoduje alebo je veľmi podobný.")
+                else:
+                    print("Text sa nezhoduje.")
+
+                text_predch = text_aktual
+                text_aktual = []
 
         count = -1
         poleObrazkov = []
@@ -68,7 +87,23 @@ else:
             print("FRAME",counting_frames,"Z", fpska, file=f)
         counting_frames = counting_frames + 30
         for text, box in prediction_groups[x]:
+            text_aktual.append(text)
             with open('output.txt', 'a') as f:
                 print(text, file=f)
+
+        s = SequenceMatcher(None, text_aktual, text_predch)
+        similarity = s.ratio()
+
+        if((counting_frames-30) != 1):
+            print("porovnavam", (counting_frames -60) , "a ", (counting_frames - 30))
+            print("predch je",text_predch,"akutal je", text_aktual)
+            if similarity >= 0.7:
+                print("Text sa zhoduje alebo je veľmi podobný.")
+            else:
+                print("Text sa nezhoduje.")
+
+            text_predch = text_aktual
+            text_aktual = []
+    
 
 

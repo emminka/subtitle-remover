@@ -6,13 +6,14 @@
   "author": "Jane Doe",
   "license": "MIT",
   "devDependencies": {
-    "electron": "19.0.0",
+    "electron": "^19.0.0",
     "electron-packager": "^17.1.1"
   },
   "scripts": {
     "start": "electron ."
   },
   "dependencies": {
+    "electron-log": "^5.0.0-beta.16",
     "python-shell": "^3.0.1",
     "toastify-js": "^1.12.0",
     "toastr": "^2.1.4"

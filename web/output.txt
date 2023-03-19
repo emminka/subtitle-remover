@@ -1,102 +1,96 @@
 
-FRAME 1 Z 25.0
+FRAME 1 Z 376
 nevermind
 george
 fruit
 the
 choose
-you
 can
+you
+o
 
-FRAME 31 Z 25.0
+FRAME 31 Z 376
+nevermind
+georgeo
+fruit
+the
+choose
+can
+you
+o
+
+FRAME 61 Z 376
 nevermind
 fruit
 george
 the
 choose
-you
 can
-
-FRAME 61 Z 25.0
-nevermind
-george
-fruit
-the
-choose
 you
-can
+o
 
-FRAME 91 Z 25.0
+FRAME 91 Z 376
+saas
 
-FRAME 121 Z 25.0
+FRAME 121 Z 376
+fruity
 where
 is
 the
-fruity
 
-FRAME 151 Z 25.0
+FRAME 151 Z 376
+te
 
-FRAME 181 Z 25.0
+FRAME 181 Z 376
 over
 there
 o
 
-FRAME 211 Z 25.0
+FRAME 211 Z 376
 
-FRAME 241 Z 25.0
-and
-there
+FRAME 241 Z 376
 and
 and
-big
-apples
+and
 bananas
-melon
-are
+apples
+0
 oranges
 very
 a
 
-FRAME 271 Z 25.0
+FRAME 271 Z 376
 and
 and
-and
-big
-there
-apples
 bananas
-melon
+and
+apples
+b
+very
+oranges
+a
+
+FRAME 301 Z 376
+and
+and
+and
+bananas
+apples
+0
+very
+oranges
+a
+
+FRAME 331 Z 376
+and
+and
+and
+bananas
+b
+apples
 oranges
 very
-are
 a
 
-FRAME 301 Z 25.0
-and
-and
-and
-big
-there
-apples
-bananas
-melon
-very
-are
-orangess
-a
-
-FRAME 331 Z 25.0
-and
-and
-and
-big
-there
-bananas
-apples
-melon
-oranges
-very
-are
-a
-
-FRAME 361 Z 25.0
+FRAME 361 Z 376
+o
