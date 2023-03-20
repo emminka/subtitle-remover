@@ -1,96 +1,14 @@
 
-FRAME 1 Z 376
-nevermind
-george
-fruit
-the
-choose
-can
-you
-o
+FRAME 1 Z 68
 
-FRAME 31 Z 376
-nevermind
-georgeo
-fruit
-the
-choose
-can
-you
-o
-
-FRAME 61 Z 376
-nevermind
-fruit
-george
-the
-choose
-can
-you
-o
-
-FRAME 91 Z 376
-saas
-
-FRAME 121 Z 376
-fruity
+FRAME 31 Z 68
 where
+fruity
 is
 the
-
-FRAME 151 Z 376
-te
-
-FRAME 181 Z 376
-over
-there
 o
 
-FRAME 211 Z 376
-
-FRAME 241 Z 376
-and
-and
-and
-bananas
-apples
-0
-oranges
-very
-a
-
-FRAME 271 Z 376
-and
-and
-bananas
-and
-apples
-b
-very
-oranges
-a
-
-FRAME 301 Z 376
-and
-and
-and
-bananas
-apples
-0
-very
-oranges
-a
-
-FRAME 331 Z 376
-and
-and
-and
-bananas
-b
-apples
-oranges
-very
-a
-
-FRAME 361 Z 376
+FRAME 61 Z 68
+over
+thereo
 o

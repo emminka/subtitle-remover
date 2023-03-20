@@ -76,6 +76,91 @@ images = []
 text_aktual = []
 text_predch = []
 
+def text_on_particular_frame(frame_number):
+    videocap.set(cv2.CAP_PROP_POS_FRAMES, frame_number)
+    prediction_groups_bis = []
+    success, image = videocap.read()
+    if not success:
+        return
+    image = image[yL:yR,xL:xR]
+    image = keras_ocr.tools.read(image)
+    prediction_groups_bis = pipeline.recognize([image])
+    particular_text = [text for text, _ in prediction_groups_bis[0]]
+    #print(particular_text, "frame", frame_number)
+    return(particular_text)
+
+def find_exact_frame(start_frame,end_frame,start_text,end_text): #bisection
+    print("ZACIATOCNY FRAME", start_frame)
+    print("KONCOVY FRAME", end_frame)
+    low_frame = start_frame
+    high_frame = end_frame
+    middle_frame = 0
+    while low_frame < high_frame:
+        # Calculate the middle frame
+        #print("HLADAME ZACIATOK DRUHEHO TITULKU")
+        middle_frame = (low_frame + high_frame) // 2
+    
+        text = text_on_particular_frame(middle_frame)
+
+        s = SequenceMatcher(None, text, end_text)
+        similarity = s.ratio()
+        if text is None:
+            podobnost_vlastna = 0.6
+        elif len(text) <= 4:
+            podobnost_vlastna = 0.2
+        else:
+            podobnost_vlastna = 0.6
+        if similarity < podobnost_vlastna:
+        # Text still doesn't match, update the search range
+            low_frame = middle_frame + 1
+            #print("text sa nezhoduje, zvyšujem frame")
+        
+        else:
+        # Text matches, update the search range
+            high_frame = middle_frame
+            #print("text sa zhoduje, menim range")
+
+    # Print the frame where the end text starts
+    print('KONCOVE TITULKY ZACINAJU NA', high_frame)
+    
+    # Define the search range using the found frame and the end frame
+    second_subtitle_start = high_frame
+    low_frame = start_frame
+    high_frame = second_subtitle_start
+
+    while low_frame < high_frame:
+        #print("HLADAME KONIEC PRVEHO TITULKU")
+        # Calculate the middle frame
+        middle_frame = (low_frame + high_frame) // 2
+
+        text = text_on_particular_frame(middle_frame)
+
+        # Calculate the similarity between the extracted text and the start text
+        s = SequenceMatcher(None, text, start_text)
+        similarity = s.ratio()
+
+        if text is None:
+            podobnost_vlastna = 0.6
+        elif len(text) <= 4:
+            podobnost_vlastna = 0.2
+        else:
+            podobnost_vlastna = 0.6
+
+        if similarity < podobnost_vlastna:
+            # Text still doesn't match, update the search range
+            high_frame = middle_frame
+            #print("text sa nezhoduje, znižujem frame")
+        else:
+            # Text matches, update the search range
+            low_frame = middle_frame + 1
+            #print("text sa zhoduje, menim trange")
+
+
+    # Print the frame where the start text ends
+    print('PRVE TITULKY KONCIA NA', low_frame - 1)
+
+
+
 
 koncovka = "_noSUB_noSOUND.mp4"
 new_name_same_path = filepath.rsplit(".", 1)[0];
@@ -135,7 +220,7 @@ if methodOfRemoving == 1: #pouzivame keras
             cv2.imwrite("frame%d.jpg" % count, image)     # save frame as JPEG file 
             poleObrazkov.append(r'C:\Users\Emma\Desktop\Bakalarka\web\frame%d.jpg' % count)
             print(poleObrazkov)
-            cislo_frame += 30 # i.e. at 30 fps, this advances one second
+            cislo_frame += 30 #cca 30framov ma sekunda
             videocap.set(cv2.CAP_PROP_POS_FRAMES, cislo_frame)
             success,image = videocap.read()
         else:
@@ -160,6 +245,9 @@ if methodOfRemoving == 1: #pouzivame keras
                         print("Text sa zhoduje alebo je veľmi podobný.")
                     else:
                         print("Text sa nezhoduje.")
+                        prvy_frame = counting_frames - 60
+                        druhy_frame = counting_frames - 30
+                        find_exact_frame(prvy_frame,druhy_frame,text_predch,text_aktual)#VOLAME FUNKCIU NA BISEKCIU
 
                     text_predch = text_aktual
                     text_aktual = []
@@ -196,6 +284,10 @@ if methodOfRemoving == 1: #pouzivame keras
                     print("Text sa zhoduje alebo je veľmi podobný.")
                 else:
                     print("Text sa nezhoduje.")
+                    prvy_frame = counting_frames - 60
+                    druhy_frame = counting_frames - 30
+                    find_exact_frame(prvy_frame,druhy_frame,text_predch,text_aktual)
+
 
                 text_predch = text_aktual
                 text_aktual = []
