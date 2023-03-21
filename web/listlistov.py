@@ -1,3 +1,7 @@
+import time
+start_time = time.time()
+
+
 od_do_bool = [1,5,8]
 vsetky = []
 
@@ -13,5 +17,6 @@ od_do_bool=[0,0,0]
 vsetky.append(od_do_bool[:])
 
 print(od_do_bool,vsetky)
+print("trvalo to %s sekund" % (time.time() - start_time))
 
 

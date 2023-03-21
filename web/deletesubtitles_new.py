@@ -10,7 +10,9 @@ import matplotlib.pyplot as plt
 from moviepy.editor import VideoFileClip, AudioFileClip, concatenate_videoclips
 import keras_ocr
 from difflib import SequenceMatcher
+import time
 
+start_time = time.time()
 xL = None #suradnice z aplikacie
 yL = None
 xR = None
@@ -68,7 +70,7 @@ fps_total = int(video.get(cv2.CAP_PROP_FRAME_COUNT)) #pocet framov celeho video
 video = cv2.VideoCapture(filepath)
 videocap = cv2.VideoCapture(filepath)
 #fpska = video.get(cv2.CAP_PROP_FPS)
-counting_frames = 1
+counting_frames = 0
 count = 0
 cislo_frame = 1
 images = []
@@ -208,7 +210,7 @@ def find_exact_frame(start_frame,end_frame,start_text,end_text): #bisection
     od_do_bool_stare[1]=(low_frame - 1)
     kontrola_stare=(low_frame - 1)
 
-    
+    #od_do_bool_stare[1] += 1
     vsetky_titulky.append(od_do_bool_stare[:])
     print("vsetky",vsetky_titulky,"stare",od_do_bool_stare, "nove", od_do_bool_nove)
 
@@ -252,7 +254,7 @@ if methodOfRemoving == 1: #pouzivame keras
                 s = SequenceMatcher(None, text_aktual, text_predch)
                 similarity = s.ratio()
 
-                if((counting_frames-30) != 1):
+                if((counting_frames-30) != 0):
                     print((counting_frames -60)," je",text_predch,"a", (counting_frames - 30), "je", text_aktual)
                     if similarity >= 0.6:
                         print("Text sa zhoduje alebo je veľmi podobný.")
@@ -270,7 +272,7 @@ if methodOfRemoving == 1: #pouzivame keras
                     text_predch = text_aktual
                     text_aktual = []
                 else:
-                    od_do_bool_stare[0]=1
+                    od_do_bool_stare[0]=0
                     text_predch = text_aktual
                     text_aktual = []
             count = -1
@@ -297,7 +299,7 @@ if methodOfRemoving == 1: #pouzivame keras
             s = SequenceMatcher(None, text_aktual, text_predch)
             similarity = s.ratio()
 
-            if((counting_frames-30) != 1):
+            if((counting_frames-30) != 0):
                 print((counting_frames -60)," je",text_predch,"a", (counting_frames - 30), "je", text_aktual)
                 if similarity >= 0.6:
                     print("Text sa zhoduje alebo je veľmi podobný.")
@@ -315,11 +317,12 @@ if methodOfRemoving == 1: #pouzivame keras
                 text_predch = text_aktual
                 text_aktual = []
             else:
-                od_do_bool_stare[0]=1
+                od_do_bool_stare[0]=0
                 text_predch = text_aktual
                 text_aktual = []
 
     od_do_bool_stare[1]=fps_total-1 #pocetframov
+    #od_do_bool_stare[1] += 1
     vsetky_titulky.append(od_do_bool_stare[:])
     print("vsetky",vsetky_titulky)
 
@@ -335,6 +338,9 @@ while(video.isOpened()):
             # Press Q on keyboard to  exit
             if cv2.waitKey(30) & 0xFF == ord('q'):
                 break
+            #print("KONTRPOLA")
+            #print(frame.shape)
+            #print(gray_mask.shape)
             no_subtitles_frame = cv2.inpaint(frame,gray_mask,3,cv2.INPAINT_TELEA) #pomocou inpaint odstranujem (iba zamazavam) titulky
             output.write(no_subtitles_frame)
             # Display the resulting frame
@@ -354,6 +360,11 @@ while(video.isOpened()):
                 if frame_number >= title_start and frame_number <= title_end and title_bool == 1:
                     found_title_range = True
                     break
+
+            # Check if the current frame is within the last subtitle range and if that range has bool 1
+            last_title_start, last_title_end, last_title_bool = vsetky_titulky[-1]
+            if frame_number >= last_title_start and frame_number <= last_title_end and last_title_bool == 1:
+                found_title_range = True
             
             # If the current frame is not within a title range, write it to the output with no modifications
             if not found_title_range:
@@ -384,5 +395,6 @@ os.remove(new_name_same_path)
 
 
 print("Video has been released.")
+print("trvalo to %s sekund" % (time.time() - start_time))
 
 
