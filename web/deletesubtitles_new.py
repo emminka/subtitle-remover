@@ -76,6 +76,14 @@ images = []
 text_aktual = []
 text_predch = []
 
+
+od_do_bool_stare = [0,0,0] #0 neodmazavam (prazdy text), 1 odmazavam (su tam titulky)
+od_do_bool_nove = [0,0,0] #0 neodmazavam (prazdy text), 1 odmazavam (su tam titulky)
+od_do_bool_stred = [0,0,0] #0 neodmazavam (prazdy text), 1 odmazavam (su tam titulky)
+vsetky_titulky = []
+kontrola_stare = 0
+kontrola_nove = 0
+
 def text_on_particular_frame(frame_number):
     videocap.set(cv2.CAP_PROP_POS_FRAMES, frame_number)
     prediction_groups_bis = []
@@ -90,6 +98,13 @@ def text_on_particular_frame(frame_number):
     return(particular_text)
 
 def find_exact_frame(start_frame,end_frame,start_text,end_text): #bisection
+
+    global od_do_bool_nove
+    global od_do_bool_stare
+    global od_do_bool_stred
+    global kontrola_nove
+    global kontrola_stare
+
     print("ZACIATOCNY FRAME", start_frame)
     print("KONCOVY FRAME", end_frame)
     low_frame = start_frame
@@ -119,9 +134,15 @@ def find_exact_frame(start_frame,end_frame,start_text,end_text): #bisection
         # Text matches, update the search range
             high_frame = middle_frame
             #print("text sa zhoduje, menim range")
+            if (text == []):
+                od_do_bool_nove[2]=0 #neodmazavam
+            else:
+                od_do_bool_nove[2]=1 #odmazavam
 
     # Print the frame where the end text starts
     print('KONCOVE TITULKY ZACINAJU NA', high_frame)
+    od_do_bool_nove[0]=high_frame
+    kontrola_nove=high_frame
     
     # Define the search range using the found frame and the end frame
     second_subtitle_start = high_frame
@@ -154,13 +175,132 @@ def find_exact_frame(start_frame,end_frame,start_text,end_text): #bisection
             # Text matches, update the search range
             low_frame = middle_frame + 1
             #print("text sa zhoduje, menim trange")
+            if (text == []):
+                od_do_bool_stare[2]=0 #neodmazavam
+            else:
+                od_do_bool_stare[2]=1 #odmazavam
 
 
     # Print the frame where the start text ends
     print('PRVE TITULKY KONCIA NA', low_frame - 1)
+    od_do_bool_stare[1]=(low_frame - 1)
+    kontrola_stare=(low_frame - 1)
+
+    
+    vsetky_titulky.append(od_do_bool_stare[:])
+    print("vsetky",vsetky_titulky,"stare",od_do_bool_stare, "nove", od_do_bool_nove)
+
+    od_do_bool_stare = od_do_bool_nove
+
+    od_do_bool_nove=[0,0,0]
+
+    if(kontrola_stare+1 != kontrola_nove):
+        od_do_bool_stred[0]=kontrola_stare+1
+        od_do_bool_stred[1]=kontrola_nove-1
+        vsetky_titulky.append(od_do_bool_stred[:])
+        od_do_bool_stred=[0,0,0]
+
+    print("vsetky",vsetky_titulky,"stare",od_do_bool_stare, "nove", od_do_bool_nove)
 
 
+if methodOfRemoving == 1: #pouzivame keras
+    success,image = videocap.read()
+    while success:
+        if(count<8):
+            image = image[yL:yR,xL:xR]  #orazena image, od:do a od:do
+            cv2.imwrite("frame%d.jpg" % count, image)     # save frame as JPEG file 
+            poleObrazkov.append(r'C:\Users\Emma\Desktop\Bakalarka\web\frame%d.jpg' % count)
+            #print(poleObrazkov)
+            cislo_frame += 30 #cca 30framov ma sekunda
+            videocap.set(cv2.CAP_PROP_POS_FRAMES, cislo_frame)
+            success,image = videocap.read()
+        else:
+            images = [keras_ocr.tools.read(img) for img in poleObrazkov]
+            prediction_groups = pipeline.recognize(images)
+            for x in range(len(images)):
+                with open('output.txt', 'a') as f:
+                    print("",file=f)
+                    print("FRAME",counting_frames,"Z", fps_total, file=f)
+                counting_frames = counting_frames + 30
+                for text, box in prediction_groups[x]:
+                    text_aktual.append(text)
+                    with open('output.txt', 'a') as f:
+                        print(text, file=f)
 
+                s = SequenceMatcher(None, text_aktual, text_predch)
+                similarity = s.ratio()
+
+                if((counting_frames-30) != 1):
+                    print((counting_frames -60)," je",text_predch,"a", (counting_frames - 30), "je", text_aktual)
+                    if similarity >= 0.6:
+                        print("Text sa zhoduje alebo je veľmi podobný.")
+                        od_do_bool_stare[1]=(counting_frames - 30)
+                    else:
+                        print("Text sa nezhoduje.")
+                        prvy_frame = counting_frames - 60
+                        druhy_frame = counting_frames - 30
+
+                        od_do_bool_stare[1]=(counting_frames - 60)
+                        od_do_bool_nove[1]=(counting_frames - 30)
+
+                        find_exact_frame(prvy_frame,druhy_frame,text_predch,text_aktual)#VOLAME FUNKCIU NA BISEKCIU
+
+                    text_predch = text_aktual
+                    text_aktual = []
+                else:
+                    od_do_bool_stare[0]=1
+                    text_predch = text_aktual
+                    text_aktual = []
+            count = -1
+            poleObrazkov = []
+            images = []
+            prediction_groups = []
+        #print('Read a new frame: ', success)
+        count += 1
+    if not poleObrazkov:
+        print("Pole obr prazdne,nerobime nic")
+    else:
+        images = [keras_ocr.tools.read(img) for img in poleObrazkov]
+        prediction_groups = pipeline.recognize(images)
+        for x in range(len(images)):
+            with open('output.txt', 'a') as f:
+                print("",file=f)
+                print("FRAME",counting_frames,"Z", fps_total, file=f)
+            counting_frames = counting_frames + 30
+            for text, box in prediction_groups[x]:
+                text_aktual.append(text)
+                with open('output.txt', 'a') as f:
+                    print(text, file=f)
+
+            s = SequenceMatcher(None, text_aktual, text_predch)
+            similarity = s.ratio()
+
+            if((counting_frames-30) != 1):
+                print((counting_frames -60)," je",text_predch,"a", (counting_frames - 30), "je", text_aktual)
+                if similarity >= 0.6:
+                    print("Text sa zhoduje alebo je veľmi podobný.")
+                    od_do_bool_stare[1]=(counting_frames - 30)
+                else:
+                    print("Text sa nezhoduje.")
+                    prvy_frame = counting_frames - 60
+                    druhy_frame = counting_frames - 30
+
+                    od_do_bool_stare[1]=(counting_frames - 60)
+                    od_do_bool_nove[1]=(counting_frames - 30)
+
+                    find_exact_frame(prvy_frame,druhy_frame,text_predch,text_aktual)
+
+                text_predch = text_aktual
+                text_aktual = []
+            else:
+                od_do_bool_stare[0]=1
+                text_predch = text_aktual
+                text_aktual = []
+
+    od_do_bool_stare[1]=fps_total-1 #pocetframov
+    vsetky_titulky.append(od_do_bool_stare[:])
+    print("vsetky",vsetky_titulky)
+    
 
 koncovka = "_noSUB_noSOUND.mp4"
 new_name_same_path = filepath.rsplit(".", 1)[0];
@@ -212,85 +352,3 @@ os.remove(new_name_same_path)
 print("Video has been released.")
 
 
-if methodOfRemoving == 1: #pouzivame keras
-    success,image = videocap.read()
-    while success:
-        if(count<8):
-            image = image[yL:yR,xL:xR]  #orazena image, od:do a od:do
-            cv2.imwrite("frame%d.jpg" % count, image)     # save frame as JPEG file 
-            poleObrazkov.append(r'C:\Users\Emma\Desktop\Bakalarka\web\frame%d.jpg' % count)
-            print(poleObrazkov)
-            cislo_frame += 30 #cca 30framov ma sekunda
-            videocap.set(cv2.CAP_PROP_POS_FRAMES, cislo_frame)
-            success,image = videocap.read()
-        else:
-            images = [keras_ocr.tools.read(img) for img in poleObrazkov]
-            prediction_groups = pipeline.recognize(images)
-            for x in range(len(images)):
-                with open('output.txt', 'a') as f:
-                    print("",file=f)
-                    print("FRAME",counting_frames,"Z", fps_total, file=f)
-                counting_frames = counting_frames + 30
-                for text, box in prediction_groups[x]:
-                    text_aktual.append(text)
-                    with open('output.txt', 'a') as f:
-                        print(text, file=f)
-
-                s = SequenceMatcher(None, text_aktual, text_predch)
-                similarity = s.ratio()
-
-                if((counting_frames-30) != 1):
-                    print((counting_frames -60)," je",text_predch,"a", (counting_frames - 30), "je", text_aktual)
-                    if similarity >= 0.6:
-                        print("Text sa zhoduje alebo je veľmi podobný.")
-                    else:
-                        print("Text sa nezhoduje.")
-                        prvy_frame = counting_frames - 60
-                        druhy_frame = counting_frames - 30
-                        find_exact_frame(prvy_frame,druhy_frame,text_predch,text_aktual)#VOLAME FUNKCIU NA BISEKCIU
-
-                    text_predch = text_aktual
-                    text_aktual = []
-                else:
-                    text_predch = text_aktual
-                    text_aktual = []
-            count = -1
-            poleObrazkov = []
-            images = []
-            prediction_groups = []
-        print('Read a new frame: ', success)
-        count += 1
-    if not poleObrazkov:
-        print("Pole obr prazdne,nerobime nic")
-    else:
-        images = [keras_ocr.tools.read(img) for img in poleObrazkov]
-        prediction_groups = pipeline.recognize(images)
-        for x in range(len(images)):
-            with open('output.txt', 'a') as f:
-                print("",file=f)
-                print("FRAME",counting_frames,"Z", fps_total, file=f)
-            counting_frames = counting_frames + 30
-            for text, box in prediction_groups[x]:
-                text_aktual.append(text)
-                with open('output.txt', 'a') as f:
-                    print(text, file=f)
-
-            s = SequenceMatcher(None, text_aktual, text_predch)
-            similarity = s.ratio()
-
-            if((counting_frames-30) != 1):
-                print((counting_frames -60)," je",text_predch,"a", (counting_frames - 30), "je", text_aktual)
-                if similarity >= 0.6:
-                    print("Text sa zhoduje alebo je veľmi podobný.")
-                else:
-                    print("Text sa nezhoduje.")
-                    prvy_frame = counting_frames - 60
-                    druhy_frame = counting_frames - 30
-                    find_exact_frame(prvy_frame,druhy_frame,text_predch,text_aktual)
-
-
-                text_predch = text_aktual
-                text_aktual = []
-            else:
-                text_predch = text_aktual
-                text_aktual = []

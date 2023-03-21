@@ -3,12 +3,12 @@ FRAME 1 Z 68
 
 FRAME 31 Z 68
 where
-fruity
+fruitb
 is
 the
 o
 
 FRAME 61 Z 68
 over
-thereo
+there
 o
