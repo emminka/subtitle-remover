@@ -76,6 +76,28 @@ images = []
 text_aktual = []
 text_predch = []
 
+start_tit = 0
+koniec_tit = 0
+
+titulky_konkretne = []
+
+koncovka = "_noSUB_noSOUND.mp4"
+new_name_same_path = filepath.rsplit(".", 1)[0];
+new_name_same_path += koncovka;
+print(new_name_same_path)
+
+koncovka1 = "_noSUB_yesSOUND.mp4"
+new_name_same_path1 = filepath.rsplit(".", 1)[0];
+new_name_same_path1 += koncovka1;
+
+mask = np.zeros((heightOfVideo,widthOfVideo,3),np.uint8) #vykreslenie ciernej masky v rozmeroch videa
+
+output = cv2.VideoWriter(new_name_same_path, -1, fpska, (widthOfVideo,heightOfVideo)) #vysledne video
+
+cv2.rectangle(mask, (xL, yL), (xR, yR),(255,255,255), -1) #-1 for filled shape
+
+gray_mask = cv2.cvtColor(mask, cv2.COLOR_BGR2GRAY) #na premalovanie lebo inak sa to nevysvetlitelne stazuje
+	
 
 od_do_bool_stare = [0,0,0] #0 neodmazavam (prazdy text), 1 odmazavam (su tam titulky)
 od_do_bool_nove = [0,0,0] #0 neodmazavam (prazdy text), 1 odmazavam (su tam titulky)
@@ -300,43 +322,55 @@ if methodOfRemoving == 1: #pouzivame keras
     od_do_bool_stare[1]=fps_total-1 #pocetframov
     vsetky_titulky.append(od_do_bool_stare[:])
     print("vsetky",vsetky_titulky)
-    
 
-koncovka = "_noSUB_noSOUND.mp4"
-new_name_same_path = filepath.rsplit(".", 1)[0];
-new_name_same_path += koncovka;
-print(new_name_same_path)
-
-koncovka1 = "_noSUB_yesSOUND.mp4"
-new_name_same_path1 = filepath.rsplit(".", 1)[0];
-new_name_same_path1 += koncovka1;
-
-mask = np.zeros((heightOfVideo,widthOfVideo,3),np.uint8) #vykreslenie ciernje masky v rozmeroch videa
-
-output = cv2.VideoWriter(new_name_same_path, -1, fpska, (widthOfVideo,heightOfVideo)) #vysledne video
-
-cv2.rectangle(mask, (xL, yL), (xR, yR),(255,255,255), -1) #-1 for filled shape
-
-gray_mask = cv2.cvtColor(mask, cv2.COLOR_BGR2GRAY) #na premalovanie lebo inak sa to nevysvetlitelne stazuje
-	
 
 if (video.isOpened()== False): 
     print("Error opening video file")
 
 while(video.isOpened()):
-    # Capture frame-by-frame
-    ret, frame = video.read()
-    if ret == True:
-        # Press Q on keyboard to  exit
-        if cv2.waitKey(30) & 0xFF == ord('q'):
+    if methodOfRemoving == 0:
+        ret, frame = video.read()
+        # Capture frame-by-frame
+        if ret == True:
+            # Press Q on keyboard to  exit
+            if cv2.waitKey(30) & 0xFF == ord('q'):
+                break
+            no_subtitles_frame = cv2.inpaint(frame,gray_mask,3,cv2.INPAINT_TELEA) #pomocou inpaint odstranujem (iba zamazavam) titulky
+            output.write(no_subtitles_frame)
+            # Display the resulting frame
+            # cv2.imshow('Frame', dst)   
+        else: 
             break
-        no_subtitles_frame = cv2.inpaint(frame,gray_mask,3,cv2.INPAINT_TELEA) #pomocou inpaint odstranujem (iba zamazavam) titulky
-        output.write(no_subtitles_frame)
-        # Display the resulting frame
-        # cv2.imshow('Frame', dst)   
-    else: 
-        break
-#video.release()
+        #video.release()
+    else:
+        ret, frame = video.read()
+        if ret == True:
+            # Get the current frame number
+            frame_number = int(video.get(cv2.CAP_PROP_POS_FRAMES))
+
+            # Loop through the title ranges to see if the current frame is within a title range
+            found_title_range = False
+            for title_start, title_end, title_bool in vsetky_titulky:
+                if frame_number >= title_start and frame_number <= title_end and title_bool == 1:
+                    found_title_range = True
+                    break
+            
+            # If the current frame is not within a title range, write it to the output with no modifications
+            if not found_title_range:
+                output.write(frame)
+            # If the current frame is within a title range, modify it as needed
+            else:
+                no_subtitles_frame = cv2.inpaint(frame,gray_mask,3,cv2.INPAINT_TELEA)
+                output.write(no_subtitles_frame)
+
+                # Check if the next frame is in the subtitle range immediately following a title range with bool 1
+                if len(vsetky_titulky) > 1:
+                    next_title_start, next_title_end, next_title_bool = vsetky_titulky[1]
+                    if frame_number == title_end and next_title_bool == 0:
+                        video.read() # skip the next frame
+        else:
+            break
+        
 
 cv2.destroyAllWindows()
 
