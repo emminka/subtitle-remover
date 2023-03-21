@@ -69,6 +69,9 @@ poleObrazkov = []
 fps_total = int(video.get(cv2.CAP_PROP_FRAME_COUNT)) #pocet framov celeho video
 video = cv2.VideoCapture(filepath)
 videocap = cv2.VideoCapture(filepath)
+width_python = int(video.get(cv2.CAP_PROP_FRAME_WIDTH ))
+height_python = int(video.get(cv2.CAP_PROP_FRAME_HEIGHT))
+
 #fpska = video.get(cv2.CAP_PROP_FPS)
 counting_frames = 0
 count = 0
@@ -92,7 +95,7 @@ koncovka1 = "_noSUB_yesSOUND.mp4"
 new_name_same_path1 = filepath.rsplit(".", 1)[0];
 new_name_same_path1 += koncovka1;
 
-mask = np.zeros((heightOfVideo,widthOfVideo,3),np.uint8) #vykreslenie ciernej masky v rozmeroch videa
+mask = np.zeros((height_python,width_python,3),np.uint8) #vykreslenie ciernej masky v rozmeroch videa
 
 output = cv2.VideoWriter(new_name_same_path, -1, fpska, (widthOfVideo,heightOfVideo)) #vysledne video
 
@@ -210,7 +213,7 @@ def find_exact_frame(start_frame,end_frame,start_text,end_text): #bisection
     od_do_bool_stare[1]=(low_frame - 1)
     kontrola_stare=(low_frame - 1)
 
-    #od_do_bool_stare[1] += 1
+    od_do_bool_stare[1] += 1 #extraframe preisottu
     vsetky_titulky.append(od_do_bool_stare[:])
     print("vsetky",vsetky_titulky,"stare",od_do_bool_stare, "nove", od_do_bool_nove)
 
@@ -322,7 +325,7 @@ if methodOfRemoving == 1: #pouzivame keras
                 text_aktual = []
 
     od_do_bool_stare[1]=fps_total-1 #pocetframov
-    #od_do_bool_stare[1] += 1
+    od_do_bool_stare[1] += 1 #extraframe preisottu
     vsetky_titulky.append(od_do_bool_stare[:])
     print("vsetky",vsetky_titulky)
 
@@ -339,8 +342,12 @@ while(video.isOpened()):
             if cv2.waitKey(30) & 0xFF == ord('q'):
                 break
             #print("KONTRPOLA")
-            #print(frame.shape)
-            #print(gray_mask.shape)
+            
+            print("CHECKUEME")
+            print(frame.shape)
+            print(gray_mask.shape)
+            print(height_python,width_python)
+            print("z appky", heightOfVideo, widthOfVideo)
             no_subtitles_frame = cv2.inpaint(frame,gray_mask,3,cv2.INPAINT_TELEA) #pomocou inpaint odstranujem (iba zamazavam) titulky
             output.write(no_subtitles_frame)
             # Display the resulting frame
