@@ -12,6 +12,8 @@ import keras_ocr
 from difflib import SequenceMatcher
 import time
 
+import argparse
+
 start_time = time.time()
 xL = None #suradnice z aplikacie
 yL = None
@@ -67,7 +69,6 @@ pipeline = keras_ocr.pipeline.Pipeline()
 f = open('output.txt','w') #zapisujem ake su titulky
 poleObrazkov = []
 fps_total = int(video.get(cv2.CAP_PROP_FRAME_COUNT)) #pocet framov celeho video
-video = cv2.VideoCapture(filepath)
 videocap = cv2.VideoCapture(filepath)
 width_python = int(video.get(cv2.CAP_PROP_FRAME_WIDTH ))
 height_python = int(video.get(cv2.CAP_PROP_FRAME_HEIGHT))
@@ -84,6 +85,7 @@ text_predch = []
 start_tit = 0
 koniec_tit = 0
 
+
 titulky_konkretne = []
 
 koncovka = "_noSUB_noSOUND.mp4"
@@ -95,11 +97,20 @@ koncovka1 = "_noSUB_yesSOUND.mp4"
 new_name_same_path1 = filepath.rsplit(".", 1)[0];
 new_name_same_path1 += koncovka1;
 
+kontola_ci_menim_masku = 1
+
 mask = np.zeros((height_python,width_python,3),np.uint8) #vykreslenie ciernej masky v rozmeroch videa
+
+print("TUTUTU")
+print(height_python)
+print(width_python)
 
 output = cv2.VideoWriter(new_name_same_path, -1, fpska, (widthOfVideo,heightOfVideo)) #vysledne video
 
 cv2.rectangle(mask, (xL, yL), (xR, yR),(255,255,255), -1) #-1 for filled shape
+
+
+maska_pokus = cv2.imread(r"C:\Users\Emma\Desktop\Bakalarka\web\masocka.jpg") 
 
 gray_mask = cv2.cvtColor(mask, cv2.COLOR_BGR2GRAY) #na premalovanie lebo inak sa to nevysvetlitelne stazuje
 	
@@ -110,6 +121,54 @@ od_do_bool_stred = [0,0,0] #0 neodmazavam (prazdy text), 1 odmazavam (su tam tit
 vsetky_titulky = []
 kontrola_stare = 0
 kontrola_nove = 0
+
+def create_mask(titulky_start):
+    
+
+    if titulky_start != 0:
+        zakladna_maska = np.zeros((height_python,width_python),np.uint8) #vykreslenie ciernej masky v rozmeroch videa
+        bez_tituliek = titulky_start - 1
+        videocap.set(cv2.CAP_PROP_POS_FRAMES, (titulky_start + 1)) #preistotu plus 1 frame
+        ret, img_titulky = videocap.read()
+        img_titulky = img_titulky[yL:yR,xL:xR]
+        img_titulky_gray = cv2.cvtColor(img_titulky, cv2.COLOR_BGR2GRAY)   #oblast s titulkami v ciernobielej
+        cv2.imwrite('img_titu.jpg', img_titulky_gray)
+
+
+        videocap.set(cv2.CAP_PROP_POS_FRAMES, bez_tituliek)
+        ret, img_bez = videocap.read()
+        img_bez = img_bez[yL:yR,xL:xR]
+        img_bez_gray = cv2.cvtColor(img_bez, cv2.COLOR_BGR2GRAY) #oblast snimky pred danou snimkou v ciermnobielej
+        cv2.imwrite('img_bez.jpg', img_bez_gray)
+
+        img_subtract = cv2.absdiff(img_titulky_gray, img_bez_gray) #odcitanie
+        cv2.imwrite('img_subst.jpg', img_subtract)
+
+
+        ret, thresh = cv2.threshold(img_subtract,12, 255, cv2.THRESH_BINARY) #theshold
+
+        kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (5,5))
+        #toto je vlastne ta mala orezana maska na titulky
+        dilated = cv2.dilate(thresh, kernel, iterations=1) #dilatacia na vyplnenie bielych medziet    
+        rows, cols = dilated.shape
+        channels = 1 #je ciernobiela
+
+        print(zakladna_maska[yL:yL+rows, xL:xL+cols].shape)
+        print(dilated.shape)
+
+        zakladna_maska[yL:yL+rows, xL:xL+cols] = cv2.addWeighted(zakladna_maska[yL:yL+rows, xL:xL+cols], 0, dilated, 1, 0)
+
+        #dilated_gray = cv2.cvtColor(dilated, cv2.COLOR_BGR2GRAY) #neoribm lebo snimka uz je ciernobiela
+
+        #davam malu oblast spat do velkej masky
+    else: #zamazem celu oblast lebo začinaju titulky na nultej snimke už hned
+        mask = np.zeros((height_python,width_python,3),np.uint8) #vykreslenie ciernej masky v rozmeroch videa
+        cv2.rectangle(mask, (xL, yL), (xR, yR),(255,255,255), -1) #-1 for filled shape
+        zakladna_maska = cv2.cvtColor(mask, cv2.COLOR_BGR2GRAY) #na premalovanie lebo inak sa to nevysvetlitelne stazuje
+
+
+    
+    return zakladna_maska
 
 def text_on_particular_frame(frame_number):
     videocap.set(cv2.CAP_PROP_POS_FRAMES, frame_number)
@@ -342,12 +401,7 @@ while(video.isOpened()):
             if cv2.waitKey(30) & 0xFF == ord('q'):
                 break
             #print("KONTRPOLA")
-            
-            print("CHECKUEME")
-            print(frame.shape)
-            print(gray_mask.shape)
-            print(height_python,width_python)
-            print("z appky", heightOfVideo, widthOfVideo)
+
             no_subtitles_frame = cv2.inpaint(frame,gray_mask,3,cv2.INPAINT_TELEA) #pomocou inpaint odstranujem (iba zamazavam) titulky
             output.write(no_subtitles_frame)
             # Display the resulting frame
@@ -355,11 +409,12 @@ while(video.isOpened()):
         else: 
             break
         #video.release()
-    else:
+    else: #keras
         ret, frame = video.read()
         if ret == True:
             # Get the current frame number
-            frame_number = int(video.get(cv2.CAP_PROP_POS_FRAMES))
+            frame_number = int(video.get(cv2.CAP_PROP_POS_FRAMES)) - 1
+            print(frame_number)
 
             # Loop through the title ranges to see if the current frame is within a title range
             found_title_range = False
@@ -374,11 +429,17 @@ while(video.isOpened()):
                 found_title_range = True
             
             # If the current frame is not within a title range, write it to the output with no modifications
+            #frame nemenimne nijak
             if not found_title_range:
                 output.write(frame)
+                kontola_ci_menim_masku = 1
             # If the current frame is within a title range, modify it as needed
             else:
-                no_subtitles_frame = cv2.inpaint(frame,gray_mask,3,cv2.INPAINT_TELEA)
+                if kontola_ci_menim_masku == 1: #menim masku
+                    presna_maska = create_mask(frame_number)
+                    print("KONTROLKA", frame_number)
+                    kontola_ci_menim_masku = 0
+                no_subtitles_frame = cv2.inpaint(frame,presna_maska,3,cv2.INPAINT_TELEA)
                 output.write(no_subtitles_frame)
 
                 # Check if the next frame is in the subtitle range immediately following a title range with bool 1
