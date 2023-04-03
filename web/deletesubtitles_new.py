@@ -65,6 +65,7 @@ if(xL is None or yL is None or xR is None or yR is None or filepath is None or h
 video = cv2.VideoCapture(filepath)
 fpska = video.get(cv2.CAP_PROP_FPS) #pocet fps za sekundu
 
+
 pipeline = keras_ocr.pipeline.Pipeline()
 f = open('output.txt','w') #zapisujem ake su titulky
 poleObrazkov = []
@@ -72,6 +73,11 @@ fps_total = int(video.get(cv2.CAP_PROP_FRAME_COUNT)) #pocet framov celeho video
 videocap = cv2.VideoCapture(filepath)
 width_python = int(video.get(cv2.CAP_PROP_FRAME_WIDTH ))
 height_python = int(video.get(cv2.CAP_PROP_FRAME_HEIGHT))
+
+
+
+print("ZA MINUTU JE",fpska)
+print("SPOLU JE",fps_total)
 
 #fpska = video.get(cv2.CAP_PROP_FPS)
 counting_frames = 0
@@ -101,9 +107,6 @@ kontola_ci_menim_masku = 1
 
 mask = np.zeros((height_python,width_python,3),np.uint8) #vykreslenie ciernej masky v rozmeroch videa
 
-print("TUTUTU")
-print(height_python)
-print(width_python)
 
 output = cv2.VideoWriter(new_name_same_path, -1, fpska, (widthOfVideo,heightOfVideo)) #vysledne video
 
@@ -124,6 +127,7 @@ kontrola_nove = 0
 
 def create_mask(titulky_start):
     
+    print("KONTROLKA", titulky_start)
 
     if titulky_start != 0:
         zakladna_maska = np.zeros((height_python,width_python),np.uint8) #vykreslenie ciernej masky v rozmeroch videa
@@ -147,7 +151,7 @@ def create_mask(titulky_start):
 
         ret, thresh = cv2.threshold(img_subtract,12, 255, cv2.THRESH_BINARY) #theshold
 
-        kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (5,5))
+        kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (7,7))
         #toto je vlastne ta mala orezana maska na titulky
         dilated = cv2.dilate(thresh, kernel, iterations=1) #dilatacia na vyplnenie bielych medziet    
         rows, cols = dilated.shape
@@ -411,34 +415,44 @@ while(video.isOpened()):
         #video.release()
     else: #keras
         ret, frame = video.read()
+       
         if ret == True:
             # Get the current frame number
             frame_number = int(video.get(cv2.CAP_PROP_POS_FRAMES)) - 1
-            print(frame_number)
+            #print(frame_number)
 
             # Loop through the title ranges to see if the current frame is within a title range
             found_title_range = False
-            for title_start, title_end, title_bool in vsetky_titulky:
+            for i, (title_start, title_end, title_bool) in enumerate(vsetky_titulky):
+                if title_bool == 1 and frame_number == title_start:
+                    presna_maska = create_mask(frame_number)
                 if frame_number >= title_start and frame_number <= title_end and title_bool == 1:
                     found_title_range = True
-                    break
-
+                                
+                if i < len(vsetky_titulky)-1 and title_bool == 1 and vsetky_titulky[i+1][2] == 1:
+                    next_title_start, _, _ = vsetky_titulky[i+1]
+                    if frame_number == title_end and next_title_start != title_end:
+                        presna_maska = create_mask(frame_number)
+                        found_title_range = False # reset flag to ensure that the current frame is not written to the output
+                        continue # skip writing the current frame to the output
+                    
             # Check if the current frame is within the last subtitle range and if that range has bool 1
             last_title_start, last_title_end, last_title_bool = vsetky_titulky[-1]
             if frame_number >= last_title_start and frame_number <= last_title_end and last_title_bool == 1:
                 found_title_range = True
+                if last_title_bool == 1 and frame_number == last_title_start:
+                    presna_maska = create_mask(frame_number)
             
             # If the current frame is not within a title range, write it to the output with no modifications
             #frame nemenimne nijak
-            if not found_title_range:
+            if not found_title_range: #bez tituliek
                 output.write(frame)
-                kontola_ci_menim_masku = 1
+                #kontola_ci_menim_masku = 1
             # If the current frame is within a title range, modify it as needed
             else:
-                if kontola_ci_menim_masku == 1: #menim masku
-                    presna_maska = create_mask(frame_number)
-                    print("KONTROLKA", frame_number)
-                    kontola_ci_menim_masku = 0
+                #if kontola_ci_menim_masku == 1: #menim masku
+                   # presna_maska = create_mask(frame_number)
+                    #kontola_ci_menim_masku = 0
                 no_subtitles_frame = cv2.inpaint(frame,presna_maska,3,cv2.INPAINT_TELEA)
                 output.write(no_subtitles_frame)
 
