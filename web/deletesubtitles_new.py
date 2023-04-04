@@ -151,7 +151,7 @@ def create_mask(titulky_start):
 
         ret, thresh = cv2.threshold(img_subtract,12, 255, cv2.THRESH_BINARY) #theshold
 
-        kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (7,7))
+        kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (8,8))
         #toto je vlastne ta mala orezana maska na titulky
         dilated = cv2.dilate(thresh, kernel, iterations=1) #dilatacia na vyplnenie bielych medziet    
         rows, cols = dilated.shape
@@ -210,11 +210,11 @@ def find_exact_frame(start_frame,end_frame,start_text,end_text): #bisection
         s = SequenceMatcher(None, text, end_text)
         similarity = s.ratio()
         if text is None:
-            podobnost_vlastna = 0.6
+            podobnost_vlastna = 0.5
         elif len(text) <= 4:
-            podobnost_vlastna = 0.2
+            podobnost_vlastna = 0.1
         else:
-            podobnost_vlastna = 0.6
+            podobnost_vlastna = 0.5
         if similarity < podobnost_vlastna:
         # Text still doesn't match, update the search range
             low_frame = middle_frame + 1
@@ -251,11 +251,11 @@ def find_exact_frame(start_frame,end_frame,start_text,end_text): #bisection
         similarity = s.ratio()
 
         if text is None:
-            podobnost_vlastna = 0.6
+            podobnost_vlastna = 0.5
         elif len(text) <= 4:
-            podobnost_vlastna = 0.2
+            podobnost_vlastna = 0.1
         else:
-            podobnost_vlastna = 0.6
+            podobnost_vlastna = 0.5
 
         if similarity < podobnost_vlastna:
             # Text still doesn't match, update the search range
