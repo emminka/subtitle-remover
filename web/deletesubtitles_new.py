@@ -125,53 +125,60 @@ vsetky_titulky = []
 kontrola_stare = 0
 kontrola_nove = 0
 
+
+def zero_frame(titulky_start): #zamazem celu oblast lebo začinaju titulky na nultej snimke už hned
+    mask = np.zeros((height_python,width_python,3),np.uint8) #vykreslenie ciernej masky v rozmeroch videa
+    cv2.rectangle(mask, (xL, yL), (xR, yR),(255,255,255), -1) #-1 for filled shape
+    zakladna_maska = cv2.cvtColor(mask, cv2.COLOR_BGR2GRAY) #na premalovanie lebo inak sa to nevysvetlitelne stazuje
+    return zakladna_maska
+
+def not_zero_frame(titulky_start):
+    zakladna_maska = np.zeros((height_python,width_python),np.uint8) #vykreslenie ciernej masky v rozmeroch videa
+    bez_tituliek = titulky_start - 1
+    videocap.set(cv2.CAP_PROP_POS_FRAMES, (titulky_start + 1)) #preistotu plus 1 frame
+    ret, img_titulky = videocap.read()
+    img_titulky = img_titulky[yL:yR,xL:xR]
+    img_titulky_gray = cv2.cvtColor(img_titulky, cv2.COLOR_BGR2GRAY)   #oblast s titulkami v ciernobielej
+    cv2.imwrite('img_titu.jpg', img_titulky_gray)
+
+
+    videocap.set(cv2.CAP_PROP_POS_FRAMES, bez_tituliek)
+    ret, img_bez = videocap.read()
+    img_bez = img_bez[yL:yR,xL:xR]
+    img_bez_gray = cv2.cvtColor(img_bez, cv2.COLOR_BGR2GRAY) #oblast snimky pred danou snimkou v ciermnobielej
+    cv2.imwrite('img_bez.jpg', img_bez_gray)
+
+    img_subtract = cv2.absdiff(img_titulky_gray, img_bez_gray) #odcitanie
+    cv2.imwrite('img_subst.jpg', img_subtract)
+
+
+    ret, thresh = cv2.threshold(img_subtract,12, 255, cv2.THRESH_BINARY) #theshold
+
+    kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (8,8))
+    #toto je vlastne ta mala orezana maska na titulky
+    dilated = cv2.dilate(thresh, kernel, iterations=1) #dilatacia na vyplnenie bielych medziet    
+    rows, cols = dilated.shape
+    channels = 1 #je ciernobiela
+
+    print(zakladna_maska[yL:yL+rows, xL:xL+cols].shape)
+    print(dilated.shape)
+
+    zakladna_maska[yL:yL+rows, xL:xL+cols] = cv2.addWeighted(zakladna_maska[yL:yL+rows, xL:xL+cols], 0, dilated, 1, 0)
+
+    return zakladna_maska
+    #dilated_gray = cv2.cvtColor(dilated, cv2.COLOR_BGR2GRAY) #neoribm lebo snimka uz je ciernobiela
+
+    #davam malu oblast spat do velkej masky
+
 def create_mask(titulky_start):
     
     print("KONTROLKA", titulky_start)
 
     if titulky_start != 0:
-        zakladna_maska = np.zeros((height_python,width_python),np.uint8) #vykreslenie ciernej masky v rozmeroch videa
-        bez_tituliek = titulky_start - 1
-        videocap.set(cv2.CAP_PROP_POS_FRAMES, (titulky_start + 1)) #preistotu plus 1 frame
-        ret, img_titulky = videocap.read()
-        img_titulky = img_titulky[yL:yR,xL:xR]
-        img_titulky_gray = cv2.cvtColor(img_titulky, cv2.COLOR_BGR2GRAY)   #oblast s titulkami v ciernobielej
-        cv2.imwrite('img_titu.jpg', img_titulky_gray)
+        zakladna_maska = not_zero_frame(titulky_start)
+    else: 
+        zakladna_maska = zero_frame(titulky_start)
 
-
-        videocap.set(cv2.CAP_PROP_POS_FRAMES, bez_tituliek)
-        ret, img_bez = videocap.read()
-        img_bez = img_bez[yL:yR,xL:xR]
-        img_bez_gray = cv2.cvtColor(img_bez, cv2.COLOR_BGR2GRAY) #oblast snimky pred danou snimkou v ciermnobielej
-        cv2.imwrite('img_bez.jpg', img_bez_gray)
-
-        img_subtract = cv2.absdiff(img_titulky_gray, img_bez_gray) #odcitanie
-        cv2.imwrite('img_subst.jpg', img_subtract)
-
-
-        ret, thresh = cv2.threshold(img_subtract,12, 255, cv2.THRESH_BINARY) #theshold
-
-        kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (8,8))
-        #toto je vlastne ta mala orezana maska na titulky
-        dilated = cv2.dilate(thresh, kernel, iterations=1) #dilatacia na vyplnenie bielych medziet    
-        rows, cols = dilated.shape
-        channels = 1 #je ciernobiela
-
-        print(zakladna_maska[yL:yL+rows, xL:xL+cols].shape)
-        print(dilated.shape)
-
-        zakladna_maska[yL:yL+rows, xL:xL+cols] = cv2.addWeighted(zakladna_maska[yL:yL+rows, xL:xL+cols], 0, dilated, 1, 0)
-
-        #dilated_gray = cv2.cvtColor(dilated, cv2.COLOR_BGR2GRAY) #neoribm lebo snimka uz je ciernobiela
-
-        #davam malu oblast spat do velkej masky
-    else: #zamazem celu oblast lebo začinaju titulky na nultej snimke už hned
-        mask = np.zeros((height_python,width_python,3),np.uint8) #vykreslenie ciernej masky v rozmeroch videa
-        cv2.rectangle(mask, (xL, yL), (xR, yR),(255,255,255), -1) #-1 for filled shape
-        zakladna_maska = cv2.cvtColor(mask, cv2.COLOR_BGR2GRAY) #na premalovanie lebo inak sa to nevysvetlitelne stazuje
-
-
-    
     return zakladna_maska
 
 def text_on_particular_frame(frame_number):
