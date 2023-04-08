@@ -125,6 +125,11 @@ vsetky_titulky = []
 kontrola_stare = 0
 kontrola_nove = 0
 
+def calculate_similarity(text1, text2):
+    s = SequenceMatcher(None, text1, text2)
+    similarity = s.ratio()
+    return similarity
+
 
 def zero_frame(titulky_start): #zamazem celu oblast lebo začinaju titulky na nultej snimke už hned
     mask = np.zeros((height_python,width_python,3),np.uint8) #vykreslenie ciernej masky v rozmeroch videa
@@ -213,9 +218,8 @@ def find_exact_frame(start_frame,end_frame,start_text,end_text): #bisection
         middle_frame = (low_frame + high_frame) // 2
     
         text = text_on_particular_frame(middle_frame)
-
-        s = SequenceMatcher(None, text, end_text)
-        similarity = s.ratio()
+        similarity = calculate_similarity(text, end_text)
+        
         if text is None:
             podobnost_vlastna = 0.5
         elif len(text) <= 4:
@@ -254,9 +258,7 @@ def find_exact_frame(start_frame,end_frame,start_text,end_text): #bisection
         text = text_on_particular_frame(middle_frame)
 
         # Calculate the similarity between the extracted text and the start text
-        s = SequenceMatcher(None, text, start_text)
-        similarity = s.ratio()
-
+        similarity = calculate_similarity(text, start_text)
         if text is None:
             podobnost_vlastna = 0.5
         elif len(text) <= 4:
