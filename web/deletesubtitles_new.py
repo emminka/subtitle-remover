@@ -55,7 +55,7 @@ for opt, arg in opts:
         print("widthOfVideo", widthOfVideo)
     elif opt in ['-h']:
         methodOfRemoving = int(arg)  
-        print("sposob odstranenia", methodOfRemoving); #0 default, 1 keras
+        print("sposob odstranenia", methodOfRemoving); #0 default, 1 keras, 2 gauss
          
 if(xL is None or yL is None or xR is None or yR is None or filepath is None or heightOfVideo is None or  widthOfVideo is None or methodOfRemoving is None):
     print("dovidopo exitujeeme ,daco  je plano")
@@ -125,6 +125,23 @@ vsetky_titulky = []
 kontrola_stare = 0
 kontrola_nove = 0
 
+
+
+def gaussian(frame_s, maska): #method gaussian blur
+    gauss_frame= cv2.GaussianBlur(frame_s, (151,151), 0) #blur povodny frame
+    maska = cv2.GaussianBlur(maska, (19,19), 0) #blur masku
+    kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (10,10))
+    dilatedMask = cv2.dilate(maska, kernel, iterations=3) #dilatujeme aby bol usek kusok vasci
+    mask3 = cv2.cvtColor(dilatedMask,cv2.COLOR_GRAY2RGB)#menime na 3farebnu
+    normalized_mask3 = mask3.astype('float32') / 255.0
+    combined_image = np.zeros_like(frame_s)
+    combined_image.fill(255)
+    a = cv2.multiply(1 - normalized_mask3, frame_s.astype('float32')) / 255.0
+    b = cv2.multiply(normalized_mask3, gauss_frame.astype('float32')) / 255.0
+    return cv2.add(a,b)
+
+
+
 def calculate_similarity(text1, text2):
     s = SequenceMatcher(None, text1, text2)
     similarity = s.ratio()
@@ -157,7 +174,7 @@ def not_zero_frame(titulky_start):
     cv2.imwrite('img_subst.jpg', img_subtract)
 
 
-    ret, thresh = cv2.threshold(img_subtract,12, 255, cv2.THRESH_BINARY) #theshold
+    ret, thresh = cv2.threshold(img_subtract,100, 255, cv2.THRESH_BINARY) #theshold
 
     kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (8,8))
     #toto je vlastne ta mala orezana maska na titulky
@@ -302,7 +319,7 @@ def find_exact_frame(start_frame,end_frame,start_text,end_text): #bisection
     print("vsetky",vsetky_titulky,"stare",od_do_bool_stare, "nove", od_do_bool_nove)
 
 
-if methodOfRemoving == 1: #pouzivame keras
+if methodOfRemoving == 1 or methodOfRemoving == 2: #pouzivame keras alebo gaus
     success,image = videocap.read()
     while success:
         if(count<8):
@@ -462,14 +479,25 @@ while(video.isOpened()):
                 #if kontola_ci_menim_masku == 1: #menim masku
                    # presna_maska = create_mask(frame_number)
                     #kontola_ci_menim_masku = 0
-                no_subtitles_frame = cv2.inpaint(frame,presna_maska,3,cv2.INPAINT_TELEA)
-                output.write(no_subtitles_frame)
+                
+                if methodOfRemoving ==1:
+                    no_subtitles_frame = cv2.inpaint(frame,presna_maska,3,cv2.INPAINT_TELEA)
+                    print("TYP CO CHCEM JE",no_subtitles_frame.dtype)
+                    output.write(no_subtitles_frame)
+                    
+                elif methodOfRemoving==2:
+                    print("TU SOM")
+                    no_subtitles_frame = gaussian(frame,presna_maska)
+                    no_subtitles_frame_uint8 = np.uint8(no_subtitles_frame * 255.0)  # Convert float32 to uint8
+                    output.write(no_subtitles_frame_uint8)
+                
 
                 # Check if the next frame is in the subtitle range immediately following a title range with bool 1
                 if len(vsetky_titulky) > 1:
                     next_title_start, next_title_end, next_title_bool = vsetky_titulky[1]
                     if frame_number == title_end and next_title_bool == 0:
                         video.read() # skip the next frame
+
         else:
             break
         

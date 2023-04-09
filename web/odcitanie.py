@@ -4,7 +4,7 @@ import cv2
 import argparse
 
 
-prva =  r'C:\Users\Emma\Desktop\Bakalarka\web\frame3.jpg'
+prva =  r'C:\Users\Emma\Desktop\Bakalarka\web\frame1.jpg'
 druha =  r'C:\Users\Emma\Desktop\Bakalarka\web\frame2.jpg'
 # Načtení prvního obrázku
 img1 = cv2.imread(prva, 0)
@@ -17,9 +17,9 @@ img_subtract = cv2.absdiff(img1, img2)
 
 cv2.imshow('Subst', img_subtract)
 
-ret, thresh = cv2.threshold(img_subtract,12, 255, cv2.THRESH_BINARY)
+ret, thresh = cv2.threshold(img_subtract,100, 255, cv2.THRESH_BINARY)
 
-kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (6,6))
+kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (8,8))
 dilated = cv2.dilate(thresh, kernel, iterations=1)
 
 
