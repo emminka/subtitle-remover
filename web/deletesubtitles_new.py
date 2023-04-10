@@ -22,11 +22,13 @@ yR = None
 filepath = None
 heightOfVideo = None
 widthOfVideo = None
+methodOfRemoving = None
+techniqueOfRemoving = None
 
 argv = sys.argv[1:]
 
 try:
-    opts, args = getopt.getopt(argv, "a:b:c:d:e:f:g:h:")
+    opts, args = getopt.getopt(argv, "a:b:c:d:e:f:g:h:i:")
     
 except:
     print("Error")
@@ -55,9 +57,12 @@ for opt, arg in opts:
         print("widthOfVideo", widthOfVideo)
     elif opt in ['-h']:
         methodOfRemoving = int(arg)  
-        print("sposob odstranenia", methodOfRemoving); #0 default, 1 keras, 2 gauss
+        print("metoda odstranenia", methodOfRemoving); #0 all, 1 keras
+    elif opt in ['-i']:
+        techniqueOfRemoving = int(arg)  
+        print("technika odstranenia", techniqueOfRemoving); #0 inpaint, 1 gauss
          
-if(xL is None or yL is None or xR is None or yR is None or filepath is None or heightOfVideo is None or  widthOfVideo is None or methodOfRemoving is None):
+if(xL is None or yL is None or xR is None or yR is None or filepath is None or heightOfVideo is None or  widthOfVideo is None or methodOfRemoving is None or techniqueOfRemoving is None):
     print("dovidopo exitujeeme ,daco  je plano")
     sys.exit(1)
 
@@ -125,20 +130,35 @@ vsetky_titulky = []
 kontrola_stare = 0
 kontrola_nove = 0
 
+def medianblur(frame_s, maska): #method gaussian blur
+    medianblur_frame = cv2.medianBlur(frame_s, 71)
+    mask3 = cv2.cvtColor(maska,cv2.COLOR_GRAY2RGB)#menime na 3farebnu
+    normalized_mask3 = mask3.astype('float32') / 255.0
+    combined_image = np.zeros_like(frame_s)
+    combined_image.fill(255)
+    a = np.multiply(1 - normalized_mask3, frame_s.astype('float32')) / 255.0
+    b = np.multiply(normalized_mask3, medianblur_frame.astype('float32')) / 255.0
+    no_subtitles_frame = np.add(a,b)
+    no_subtitles_frame_uint8 = np.uint8(no_subtitles_frame * 255.0)  # Convert float32 to uint8
+    return no_subtitles_frame_uint8
 
 
 def gaussian(frame_s, maska): #method gaussian blur
     gauss_frame= cv2.GaussianBlur(frame_s, (151,151), 0) #blur povodny frame
-    maska = cv2.GaussianBlur(maska, (19,19), 0) #blur masku
-    kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (10,10))
-    dilatedMask = cv2.dilate(maska, kernel, iterations=3) #dilatujeme aby bol usek kusok vasci
+    maska = cv2.GaussianBlur(maska, (5,5), 0) #blur masku
+    kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (5,5))
+    dilatedMask = cv2.dilate(maska, kernel, iterations=5) #dilatujeme aby bol usek kusok vasci
     mask3 = cv2.cvtColor(dilatedMask,cv2.COLOR_GRAY2RGB)#menime na 3farebnu
     normalized_mask3 = mask3.astype('float32') / 255.0
     combined_image = np.zeros_like(frame_s)
     combined_image.fill(255)
-    a = cv2.multiply(1 - normalized_mask3, frame_s.astype('float32')) / 255.0
-    b = cv2.multiply(normalized_mask3, gauss_frame.astype('float32')) / 255.0
-    return cv2.add(a,b)
+    a = np.multiply(1 - normalized_mask3, frame_s.astype('float32')) / 255.0
+    b = np.multiply(normalized_mask3, gauss_frame.astype('float32')) / 255.0
+    no_subtitles_frame = np.add(a,b)
+    no_subtitles_frame_uint8 = np.uint8(no_subtitles_frame * 255.0)  # Convert float32 to uint8
+    return no_subtitles_frame_uint8
+
+
 
 
 
@@ -176,7 +196,7 @@ def not_zero_frame(titulky_start):
 
     ret, thresh = cv2.threshold(img_subtract,100, 255, cv2.THRESH_BINARY) #theshold
 
-    kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (8,8))
+    kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (10,10))
     #toto je vlastne ta mala orezana maska na titulky
     dilated = cv2.dilate(thresh, kernel, iterations=1) #dilatacia na vyplnenie bielych medziet    
     rows, cols = dilated.shape
@@ -319,7 +339,7 @@ def find_exact_frame(start_frame,end_frame,start_text,end_text): #bisection
     print("vsetky",vsetky_titulky,"stare",od_do_bool_stare, "nove", od_do_bool_nove)
 
 
-if methodOfRemoving == 1 or methodOfRemoving == 2: #pouzivame keras alebo gaus
+if methodOfRemoving == 1: #pouzivame keras
     success,image = videocap.read()
     while success:
         if(count<8):
@@ -431,15 +451,22 @@ while(video.isOpened()):
             if cv2.waitKey(30) & 0xFF == ord('q'):
                 break
             #print("KONTRPOLA")
-
-            no_subtitles_frame = cv2.inpaint(frame,gray_mask,3,cv2.INPAINT_TELEA) #pomocou inpaint odstranujem (iba zamazavam) titulky
-            output.write(no_subtitles_frame)
-            # Display the resulting frame
-            # cv2.imshow('Frame', dst)   
+            if techniqueOfRemoving == 0: #inpaiting NS vsetko
+                no_subtitles_frame = cv2.inpaint(frame,gray_mask,3,cv2.INPAINT_NS) #pomocou inpaint odstranujem (iba zamazavam) titulky
+                output.write(no_subtitles_frame)
+            elif techniqueOfRemoving == 1: #inpaiting TELEA vsetko
+                no_subtitles_frame = cv2.inpaint(frame,gray_mask,3,cv2.INPAINT_TELEA) #pomocou inpaint odstranujem (iba zamazavam) titulky
+                output.write(no_subtitles_frame)
+            elif techniqueOfRemoving == 2: #gauss vsetko
+                no_subtitles_frame = gaussian(frame,gray_mask)
+                output.write(no_subtitles_frame)
+            elif techniqueOfRemoving == 3: #median blue vsetko
+                no_subtitles_frame = medianblur(frame,gray_mask)
+                output.write(no_subtitles_frame)
         else: 
             break
         #video.release()
-    else: #keras
+    else: #method of remov je 1, teda keras 
         ret, frame = video.read()
        
         if ret == True:
@@ -480,17 +507,22 @@ while(video.isOpened()):
                    # presna_maska = create_mask(frame_number)
                     #kontola_ci_menim_masku = 0
                 
-                if methodOfRemoving ==1:
+                if techniqueOfRemoving == 0: #inpaiting NS
+                    no_subtitles_frame = cv2.inpaint(frame,presna_maska,3,cv2.INPAINT_NS)
+                    output.write(no_subtitles_frame)
+                
+                elif techniqueOfRemoving == 1: #inpaiting telea
                     no_subtitles_frame = cv2.inpaint(frame,presna_maska,3,cv2.INPAINT_TELEA)
-                    print("TYP CO CHCEM JE",no_subtitles_frame.dtype)
                     output.write(no_subtitles_frame)
                     
-                elif methodOfRemoving==2:
+                elif techniqueOfRemoving == 2: #gauss
                     print("TU SOM")
                     no_subtitles_frame = gaussian(frame,presna_maska)
-                    no_subtitles_frame_uint8 = np.uint8(no_subtitles_frame * 255.0)  # Convert float32 to uint8
-                    output.write(no_subtitles_frame_uint8)
-                
+                    output.write(no_subtitles_frame)
+                elif techniqueOfRemoving == 3: #median blur vsetko
+                    no_subtitles_frame = medianblur(frame,presna_maska)
+                    output.write(no_subtitles_frame)
+                    
 
                 # Check if the next frame is in the subtitle range immediately following a title range with bool 1
                 if len(vsetky_titulky) > 1:
