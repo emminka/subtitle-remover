@@ -258,11 +258,11 @@ def find_exact_frame(start_frame,end_frame,start_text,end_text): #bisection
         similarity = calculate_similarity(text, end_text)
         
         if text is None:
-            podobnost_vlastna = 0.5
+            podobnost_vlastna = 0.41
         elif len(text) <= 4:
             podobnost_vlastna = 0.1
         else:
-            podobnost_vlastna = 0.5
+            podobnost_vlastna = 0.41
         if similarity < podobnost_vlastna:
         # Text still doesn't match, update the search range
             low_frame = middle_frame + 1
@@ -297,11 +297,11 @@ def find_exact_frame(start_frame,end_frame,start_text,end_text): #bisection
         # Calculate the similarity between the extracted text and the start text
         similarity = calculate_similarity(text, start_text)
         if text is None:
-            podobnost_vlastna = 0.5
+            podobnost_vlastna = 0.41
         elif len(text) <= 4:
             podobnost_vlastna = 0.1
         else:
-            podobnost_vlastna = 0.5
+            podobnost_vlastna = 0.41
 
         if similarity < podobnost_vlastna:
             # Text still doesn't match, update the search range
@@ -368,7 +368,7 @@ if methodOfRemoving == 1: #pouzivame keras
 
                 if((counting_frames-30) != 0):
                     print((counting_frames -60)," je",text_predch,"a", (counting_frames - 30), "je", text_aktual)
-                    if similarity >= 0.6:
+                    if similarity >= 0.4:
                         print("Text sa zhoduje alebo je veľmi podobný.")
                         od_do_bool_stare[1]=(counting_frames - 30)
                     else:
@@ -413,7 +413,7 @@ if methodOfRemoving == 1: #pouzivame keras
 
             if((counting_frames-30) != 0):
                 print((counting_frames -60)," je",text_predch,"a", (counting_frames - 30), "je", text_aktual)
-                if similarity >= 0.6:
+                if similarity >= 0.4:
                     print("Text sa zhoduje alebo je veľmi podobný.")
                     od_do_bool_stare[1]=(counting_frames - 30)
                 else:
