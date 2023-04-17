@@ -11,11 +11,11 @@ from moviepy.editor import VideoFileClip, AudioFileClip, concatenate_videoclips
 import keras_ocr
 from difflib import SequenceMatcher
 import time
-
 import argparse
+import datetime
 
-start_time = time.time()
-xL = None #suradnice z aplikacie
+start_time = time.time() #for info how long it takes
+xL = None
 yL = None
 xR = None
 yR = None
@@ -86,6 +86,7 @@ print("SPOLU JE",fps_total)
 
 #fpska = video.get(cv2.CAP_PROP_FPS)
 counting_frames = 0
+counting_frames_given = 15
 count = 0
 cislo_frame = 1
 images = []
@@ -117,9 +118,6 @@ output = cv2.VideoWriter(new_name_same_path, -1, fpska, (widthOfVideo,heightOfVi
 
 cv2.rectangle(mask, (xL, yL), (xR, yR),(255,255,255), -1) #-1 for filled shape
 
-
-maska_pokus = cv2.imread(r"C:\Users\Emma\Desktop\Bakalarka\web\masocka.jpg") 
-
 gray_mask = cv2.cvtColor(mask, cv2.COLOR_BGR2GRAY) #na premalovanie lebo inak sa to nevysvetlitelne stazuje
 	
 
@@ -142,7 +140,6 @@ def medianblur(frame_s, maska): #method gaussian blur
     no_subtitles_frame_uint8 = np.uint8(no_subtitles_frame * 255.0)  # Convert float32 to uint8
     return no_subtitles_frame_uint8
 
-
 def gaussian(frame_s, maska): #method gaussian blur
     gauss_frame= cv2.GaussianBlur(frame_s, (151,151), 0) #blur povodny frame
     maska = cv2.GaussianBlur(maska, (5,5), 0) #blur masku
@@ -158,15 +155,10 @@ def gaussian(frame_s, maska): #method gaussian blur
     no_subtitles_frame_uint8 = np.uint8(no_subtitles_frame * 255.0)  # Convert float32 to uint8
     return no_subtitles_frame_uint8
 
-
-
-
-
 def calculate_similarity(text1, text2):
     s = SequenceMatcher(None, text1, text2)
     similarity = s.ratio()
     return similarity
-
 
 def zero_frame(titulky_start): #zamazem celu oblast lebo začinaju titulky na nultej snimke už hned
     mask = np.zeros((height_python,width_python,3),np.uint8) #vykreslenie ciernej masky v rozmeroch videa
@@ -194,11 +186,11 @@ def not_zero_frame(titulky_start):
     cv2.imwrite('img_subst.jpg', img_subtract)
 
 
-    ret, thresh = cv2.threshold(img_subtract,100, 255, cv2.THRESH_BINARY) #theshold
+    ret, thresh = cv2.threshold(img_subtract,50, 255, cv2.THRESH_BINARY) #theshold
 
     kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (10,10))
     #toto je vlastne ta mala orezana maska na titulky
-    dilated = cv2.dilate(thresh, kernel, iterations=1) #dilatacia na vyplnenie bielych medziet    
+    dilated = cv2.dilate(thresh, kernel, iterations=2) #dilatacia na vyplnenie bielych medziet    
     rows, cols = dilated.shape
     channels = 1 #je ciernobiela
 
@@ -233,7 +225,7 @@ def text_on_particular_frame(frame_number):
     image = keras_ocr.tools.read(image)
     prediction_groups_bis = pipeline.recognize([image])
     particular_text = [text for text, _ in prediction_groups_bis[0]]
-    #print(particular_text, "frame", frame_number)
+    print(particular_text, "frame", frame_number)
     return(particular_text)
 
 def find_exact_frame(start_frame,end_frame,start_text,end_text): #bisection
@@ -257,13 +249,13 @@ def find_exact_frame(start_frame,end_frame,start_text,end_text): #bisection
         text = text_on_particular_frame(middle_frame)
         similarity = calculate_similarity(text, end_text)
         
-        if text is None:
+        '''if text is None:
             podobnost_vlastna = 0.41
         elif len(text) <= 4:
-            podobnost_vlastna = 0.1
-        else:
             podobnost_vlastna = 0.41
-        if similarity < podobnost_vlastna:
+        else:
+            podobnost_vlastna = 0.41'''
+        if similarity < 0.39:
         # Text still doesn't match, update the search range
             low_frame = middle_frame + 1
             #print("text sa nezhoduje, zvyšujem frame")
@@ -296,14 +288,15 @@ def find_exact_frame(start_frame,end_frame,start_text,end_text): #bisection
 
         # Calculate the similarity between the extracted text and the start text
         similarity = calculate_similarity(text, start_text)
-        if text is None:
+
+        '''if text is None:
             podobnost_vlastna = 0.41
         elif len(text) <= 4:
-            podobnost_vlastna = 0.1
-        else:
             podobnost_vlastna = 0.41
+        else:
+            podobnost_vlastna = 0.41'''
 
-        if similarity < podobnost_vlastna:
+        if similarity < 0.39:
             # Text still doesn't match, update the search range
             high_frame = middle_frame
             #print("text sa nezhoduje, znižujem frame")
@@ -345,7 +338,7 @@ if methodOfRemoving == 1: #pouzivame keras
         if(count<8):
             image = image[yL:yR,xL:xR]  #orazena image, od:do a od:do
             cv2.imwrite("frame%d.jpg" % count, image)     # save frame as JPEG file 
-            poleObrazkov.append(r'C:\Users\Emma\Desktop\Bakalarka\web\frame%d.jpg' % count)
+            poleObrazkov.append("frame%d.jpg" % count)
             #print(poleObrazkov)
             cislo_frame += 30 #cca 30framov ma sekunda
             videocap.set(cv2.CAP_PROP_POS_FRAMES, cislo_frame)
@@ -516,7 +509,7 @@ while(video.isOpened()):
                     output.write(no_subtitles_frame)
                     
                 elif techniqueOfRemoving == 2: #gauss
-                    print("TU SOM")
+                    #print("TU SOM")
                     no_subtitles_frame = gaussian(frame,presna_maska)
                     output.write(no_subtitles_frame)
                 elif techniqueOfRemoving == 3: #median blur vsetko
@@ -546,6 +539,9 @@ os.remove(new_name_same_path)
 
 
 print("Video has been released.")
-print("trvalo to %s sekund" % (time.time() - start_time))
+casik = 0
+casik = str(datetime.timedelta(seconds=(time.time() - start_time)))
+print("Removing subtitles took",casik)
+
 
 
