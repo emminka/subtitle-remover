@@ -104,6 +104,7 @@
             position: absolute;
             border: 0;
             border-radius: 5px;
+        
 
         
 
@@ -114,16 +115,30 @@
 </head>
 
 <body>
-    <div style="display:flex;">   
-    <video  id="uploadedVideo" controls src="" controlsList="nofullscreen" >
-    </video>
+    <div style="display: flex;">
+        <video id="uploadedVideo" controls src="" controlsList="nofullscreen"></video>
+        <div style="margin-left: 20px;">
+            <label for="method_of_removing">Method of Removing:</label>
+            <select id="method_of_removing" onchange="getValueofSelect()">
+                <option value="default_remove">Remove All</option>
+                <option value="kerasss">Subtitles only</option>
+            </select>
+            <br></br>
+            <div id="detect_every_x_sub" style="display:none;">
+                <label >Detect subtitle every&nbsp;</label>
+                <br></br>
+                <input type="number" id="numberInput" min="1" max="200" style="font-size: 14px; width: 40px; height: 15PX;" value="30">
+                <label >&nbsp;frames. </label>
+            </div>
+            <label for="technique_of_removing">Technique of Removing:</label>
+            <select id="technique_of_removing" onchange="getValueofSelect()">
+                <option value="inpaint_NS">INPAINT_NS</option>
+                <option value="inpaint_TELEA">INPAINT_TELEA</option>
+                <option value="gaus">Gaussian Blur</option>
+                <option value="median">Median Blur</option>
+            </select>
 
-    <label for="optionss">Spôsob odstránenia</label><br>
-    <select id="optionss">
-			<option id="defalut_remove">Default</option>
-			<option id="kerasss">Keras</option>
-			<option id="gaus">Gaussian</option>
-		</select>
+        </div>
     </div>
 
     <div id="subtitle_area" class="absolute" style="display: none;" >
@@ -162,10 +177,11 @@
         let filePath;
         let directoryPath;
         let controls_showed = 0; //controls are not showwed
-        let sposob_odstranenia = 0; //0 je default, 1 je keras, 2 je gauss
-        
-        
+        let metoda_odstranenia = 0; //0 je vsetko, 1 je keras
+        let technika_odstranenia = 0; //0 je ns,1 telea, 2 gaus, 3 median
+        let detection_on_every_x_frame = 30; 
 
+    
         $("#file-upload").change(onFileUpload);
 
         let WannaHide = function(e){ //is now showed
@@ -195,12 +211,28 @@
         }
 
         function getValueofSelect() {
-            sposob_odstranenia = document.getElementById("optionss").selectedIndex;
+            const metoda_odstranenia = document.getElementById("method_of_removing").selectedIndex;
+            const technika_odstranenia = document.getElementById("technique_of_removing").selectedIndex;
+            const numberInput = document.getElementById("numberInput");
+            const detect_sub = document.getElementById("detect_every_x_sub");
 
-            console.log("Vybraná možnosť je: " + sposob_odstranenia);
+            console.log("Metoda je: " + metoda_odstranenia);
+            console.log("Technika je: " + technika_odstranenia);
+            if (metoda_odstranenia == 1){
+                detect_sub.style.display = "flex";
+                console.log("MAME KERAS");
+                detection_on_every_x_frame = numberInput.value;
+                console.log("mame value" + detection_on_every_x_frame);
+            }
+            else{
+                detect_sub.style.display = "none";
+                console.log("NEMAME KERAS");
+            }
         }
-
-        document.getElementById("optionss").onchange = getValueofSelect;
+        document.getElementById("detect_every_x_sub").addEventListener("change", getValueofSelect);
+        
+        document.getElementById("method_of_removing").onchange = getValueofSelect;
+        document.getElementById("technique_of_removing").onchange = getValueofSelect;
 
         let handleClick = function(e) { 
 
@@ -244,6 +276,7 @@
                 console.log("no toto by malo fungovat:::::::")
                 heightOfVideo = $("video")[0].videoHeight; //vyska nahraneho videa
                 widthOfVideo = $("video")[0].videoWidth; //sirka nahraneho videa
+
                 console.log("vysoka origo", heightOfVideo)
                 console.log("siroka origo", widthOfVideo);
                 heightOfVideoInApp = $("video").height(); //vyska videa v konzole
@@ -264,16 +297,6 @@
                 $('div.absolute').css('width', widthOfSubtArea);
                 $('div.absolute').css('height', heightOfSubtArea);
                 $("#subtitle_area").show();
-
-                //prepocitanie pomerovo ked je video male (nezvacsene)
-                //-8 kvoli ramceku ktory je okolo video
-                /*
-                leftUpX = Math.round(-8 +(leftUpX/widthOfVideoInApp) * widthOfVideo)
-                leftUpY = Math.round(-8 +(leftUpY/heightOfVideoInApp)*heightOfVideo)
-                RightDownX = Math.round(-8 +(RightDownX/widthOfVideoInApp) * widthOfVideo)
-                RightDownY = Math.round(-8 +(RightDownY/heightOfVideoInApp)*heightOfVideo)
-                */
-                
 
                 console.log("CISLA PO NOVOM")
                 console.log("prava dole x" + RightDownX)
@@ -329,6 +352,9 @@
         let DeleteSubtitlesClicked = function(e){
             var area_to_be_deleted = document.getElementById("subtitle_area").getBoundingClientRect();
             console.log(area_to_be_deleted.top, area_to_be_deleted.right, area_to_be_deleted.bottom, area_to_be_deleted.left);
+            
+            metoda_odstranenia = document.getElementById("method_of_removing").selectedIndex;
+            technika_odstranenia = document.getElementById("technique_of_removing").selectedIndex;
 
             leftUpX = area_to_be_deleted.left;
             leftUpY = area_to_be_deleted.top;
@@ -340,6 +366,10 @@
             RightDownX = Math.round(-8 - 2+ (RightDownX/widthOfVideoInApp) * widthOfVideo)
             RightDownY = Math.round(- 8 - 2 + (RightDownY/heightOfVideoInApp)*heightOfVideo)
 
+            if (0 > detection_on_every_x_frame || 200 < detection_on_every_x_frame){
+                toastr.error("Number of frames for detecting subtitles is not in range. Minimal number is 1, maximal is 200.")
+                return;
+            }
 
 
             renderer.skript(leftUpX, leftUpY, RightDownX ,RightDownY, filePath, heightOfVideo, widthOfVideo);

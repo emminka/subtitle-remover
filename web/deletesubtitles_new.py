@@ -24,11 +24,12 @@ heightOfVideo = None
 widthOfVideo = None
 methodOfRemoving = None
 techniqueOfRemoving = None
+counting_frames_given = None
 
 argv = sys.argv[1:]
 
 try:
-    opts, args = getopt.getopt(argv, "a:b:c:d:e:f:g:h:i:")
+    opts, args = getopt.getopt(argv, "a:b:c:d:e:f:g:h:i:j:")
     
 except:
     print("Error")
@@ -60,9 +61,12 @@ for opt, arg in opts:
         print("metoda odstranenia", methodOfRemoving); #0 all, 1 keras
     elif opt in ['-i']:
         techniqueOfRemoving = int(arg)  
-        print("technika odstranenia", techniqueOfRemoving); #0 inpaint, 1 gauss
+        print("technika odstranenia", techniqueOfRemoving); #0 ns, 1 telea, 2 gauss, 3 median
+    elif opt in ['-j']:
+        counting_frames_given = int(arg)  
+        print("Dane framy", counting_frames_given);
          
-if(xL is None or yL is None or xR is None or yR is None or filepath is None or heightOfVideo is None or  widthOfVideo is None or methodOfRemoving is None or techniqueOfRemoving is None):
+if(xL is None or yL is None or xR is None or yR is None or filepath is None or heightOfVideo is None or  widthOfVideo is None or methodOfRemoving is None or techniqueOfRemoving is None or counting_frames_given is None):
     print("dovidopo exitujeeme ,daco  je plano")
     sys.exit(1)
 
@@ -86,7 +90,7 @@ print("SPOLU JE",fps_total)
 
 #fpska = video.get(cv2.CAP_PROP_FPS)
 counting_frames = 0
-counting_frames_given = 15
+
 count = 0
 cislo_frame = 1
 images = []
@@ -340,7 +344,7 @@ if methodOfRemoving == 1: #pouzivame keras
             cv2.imwrite("frame%d.jpg" % count, image)     # save frame as JPEG file 
             poleObrazkov.append("frame%d.jpg" % count)
             #print(poleObrazkov)
-            cislo_frame += 30 #cca 30framov ma sekunda
+            cislo_frame += counting_frames_given #cca 30framov ma sekunda
             videocap.set(cv2.CAP_PROP_POS_FRAMES, cislo_frame)
             success,image = videocap.read()
         else:
@@ -350,7 +354,7 @@ if methodOfRemoving == 1: #pouzivame keras
                 with open('output.txt', 'a') as f:
                     print("",file=f)
                     print("FRAME",counting_frames,"Z", fps_total, file=f)
-                counting_frames = counting_frames + 30
+                counting_frames = counting_frames + counting_frames_given
                 for text, box in prediction_groups[x]:
                     text_aktual.append(text)
                     with open('output.txt', 'a') as f:
@@ -359,18 +363,18 @@ if methodOfRemoving == 1: #pouzivame keras
                 s = SequenceMatcher(None, text_aktual, text_predch)
                 similarity = s.ratio()
 
-                if((counting_frames-30) != 0):
-                    print((counting_frames -60)," je",text_predch,"a", (counting_frames - 30), "je", text_aktual)
+                if((counting_frames-counting_frames_given) != 0):
+                    print((counting_frames -(counting_frames_given*2))," je",text_predch,"a", (counting_frames - counting_frames_given), "je", text_aktual)
                     if similarity >= 0.4:
                         print("Text sa zhoduje alebo je veľmi podobný.")
-                        od_do_bool_stare[1]=(counting_frames - 30)
+                        od_do_bool_stare[1]=(counting_frames - counting_frames_given)
                     else:
                         print("Text sa nezhoduje.")
-                        prvy_frame = counting_frames - 60
-                        druhy_frame = counting_frames - 30
+                        prvy_frame = counting_frames - (counting_frames_given*2)
+                        druhy_frame = counting_frames - counting_frames_given
 
-                        od_do_bool_stare[1]=(counting_frames - 60)
-                        od_do_bool_nove[1]=(counting_frames - 30)
+                        od_do_bool_stare[1]=(counting_frames - (counting_frames_given*2))
+                        od_do_bool_nove[1]=(counting_frames - counting_frames_given)
 
                         find_exact_frame(prvy_frame,druhy_frame,text_predch,text_aktual)#VOLAME FUNKCIU NA BISEKCIU
 
@@ -395,7 +399,7 @@ if methodOfRemoving == 1: #pouzivame keras
             with open('output.txt', 'a') as f:
                 print("",file=f)
                 print("FRAME",counting_frames,"Z", fps_total, file=f)
-            counting_frames = counting_frames + 30
+            counting_frames = counting_frames + counting_frames_given
             for text, box in prediction_groups[x]:
                 text_aktual.append(text)
                 with open('output.txt', 'a') as f:
@@ -404,18 +408,18 @@ if methodOfRemoving == 1: #pouzivame keras
             s = SequenceMatcher(None, text_aktual, text_predch)
             similarity = s.ratio()
 
-            if((counting_frames-30) != 0):
-                print((counting_frames -60)," je",text_predch,"a", (counting_frames - 30), "je", text_aktual)
+            if((counting_frames-counting_frames_given) != 0):
+                print((counting_frames -(counting_frames_given*2))," je",text_predch,"a", (counting_frames - counting_frames_given), "je", text_aktual)
                 if similarity >= 0.4:
                     print("Text sa zhoduje alebo je veľmi podobný.")
-                    od_do_bool_stare[1]=(counting_frames - 30)
+                    od_do_bool_stare[1]=(counting_frames - counting_frames_given)
                 else:
                     print("Text sa nezhoduje.")
-                    prvy_frame = counting_frames - 60
-                    druhy_frame = counting_frames - 30
+                    prvy_frame = counting_frames - (counting_frames_given*2)
+                    druhy_frame = counting_frames - counting_frames_given
 
-                    od_do_bool_stare[1]=(counting_frames - 60)
-                    od_do_bool_nove[1]=(counting_frames - 30)
+                    od_do_bool_stare[1]=(counting_frames - (counting_frames_given*2))
+                    od_do_bool_nove[1]=(counting_frames - counting_frames_given)
 
                     find_exact_frame(prvy_frame,druhy_frame,text_predch,text_aktual)
 
