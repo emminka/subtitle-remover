@@ -6,6 +6,7 @@
   "author": "Jane Doe",
   "license": "MIT",
   "devDependencies": {
+    "@electron-forge/cli": "^6.1.1",
     "electron": "^19.0.0",
     "electron-packager": "^17.1.1"
   },

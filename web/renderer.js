@@ -34,7 +34,7 @@ function skript(){
 
   pythonProcess.stderr.on('data', (data) => {
     const message = data.toString();
-    if (message.includes("error") || message.includes("Error")) {
+    if (message.includes("error") || message.includes("Error")|| message.includes("Errno")) {
       console.error(message);
     }
     else{
