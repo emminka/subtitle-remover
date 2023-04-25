@@ -134,10 +134,16 @@ kontrola_stare = 0
 kontrola_nove = 0
 suma_progressu_prva_cast = 0
 suma_progressu_druha_cast = 700
+suma_progressu_not_keras = 0
 pocet_jednotiek = 0
 progress_bar_first = 0
 progress_bar_second = 0
 progress_bar_third = 1000
+progress_not_keras = 0
+progress_less_than_950 = 0
+progress_more_than_950 = 0
+count_not_keras = 0
+
 
 
 my_frequency_for_bar = 0
@@ -146,7 +152,12 @@ my_frequency_for_bar = 0
 my_frequency_for_bar = fps_total / counting_frames_given
 progress_bar_first = 700 / my_frequency_for_bar 
 
-print("CAS_ODMAZANIA:",((fps_total//fpska)*8)//60)
+if (methodOfRemoving == 1):
+    print("CAS_ODMAZANIA:",((fps_total//fpska)*12)//60)
+else:
+    print("CAS_ODMAZANIA:",((fps_total//fpska)*6)//60)
+    sys.stdout.flush()
+
 
 print("navysujeme pooo", progress_bar_first)
 
@@ -468,8 +479,8 @@ if methodOfRemoving == 1: #pouzivame keras
     pocet_jednotiek = len([lst for lst in vsetky_titulky if lst[-1] == 1])
     print(pocet_jednotiek)
     progress_bar_second = 250 / pocet_jednotiek
-else:
-    print("PRINT DVA")
+
+
 
 if (video.isOpened()== False): 
     print("Error opening video file")
@@ -477,12 +488,37 @@ if (video.isOpened()== False):
 while(video.isOpened()):
     if methodOfRemoving == 0:
         ret, frame = video.read()
+        count_not_keras+=1
         # Capture frame-by-frame
         if ret == True:
             # Press Q on keyboard to  exit
             if cv2.waitKey(30) & 0xFF == ord('q'):
                 break
             #print("KONTRPOLA")
+            if(count_not_keras == 1 and fps_total < 950):
+                progress_less_than_950 = fps_total/950
+                everyframeislike = 1//progress_less_than_950
+                chceme_kazdych = everyframeislike*10
+                pomocna_suma = chceme_kazdych
+
+            elif (count_not_keras == 1 and fps_total > 950):
+                everyframeislike = fps_total//950
+                chceme_kazdych = everyframeislike*10
+                pomocna_suma = chceme_kazdych
+
+            print("count", count_not_keras,"pomoc",pomocna_suma)
+            sys.stdout.flush()
+
+            if (count_not_keras ==pomocna_suma):
+                budeme_opakovat = 950//(fps_total//chceme_kazdych)
+                suma_progressu_not_keras += budeme_opakovat
+                print("PROGRESS: ",suma_progressu_not_keras)
+                print("pred",pomocna_suma)
+                pomocna_suma+=chceme_kazdych
+                print("po",pomocna_suma)
+                sys.stdout.flush()
+
+            
             if techniqueOfRemoving == 0: #inpaiting NS vsetko
                 no_subtitles_frame = cv2.inpaint(frame,gray_mask,3,cv2.INPAINT_NS) #pomocou inpaint odstranujem (iba zamazavam) titulky
                 output.write(no_subtitles_frame)
