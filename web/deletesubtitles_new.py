@@ -88,6 +88,11 @@ height_python = int(video.get(cv2.CAP_PROP_FRAME_HEIGHT))
 print("ZA MINUTU JE",fpska)
 print("SPOLU JE",fps_total)
 
+my_frequency_for_bar = fps_total / counting_frames_given
+progress_bar_first = 500 // my_frequency_for_bar 
+
+print("navysujeme pooo", progress_bar_first)
+
 #fpska = video.get(cv2.CAP_PROP_FPS)
 counting_frames = 0
 
@@ -131,6 +136,8 @@ od_do_bool_stred = [0,0,0] #0 neodmazavam (prazdy text), 1 odmazavam (su tam tit
 vsetky_titulky = []
 kontrola_stare = 0
 kontrola_nove = 0
+suma_progressu = 0
+pocet_jednotiek = 0
 
 def medianblur(frame_s, maska): #method gaussian blur
     medianblur_frame = cv2.medianBlur(frame_s, 71)
@@ -209,6 +216,8 @@ def not_zero_frame(titulky_start):
     #davam malu oblast spat do velkej masky
 
 def create_mask(titulky_start):
+
+    #print("PROGRESS: 555")
     
     print("KONTROLKA", titulky_start)
 
@@ -239,6 +248,11 @@ def find_exact_frame(start_frame,end_frame,start_text,end_text): #bisection
     global od_do_bool_stred
     global kontrola_nove
     global kontrola_stare
+
+    #global suma_progressu
+    #suma_progressu += progress_bar_first
+    #print("PROGRESS: ",suma_progressu)
+
 
     print("ZACIATOCNY FRAME", start_frame)
     print("KONCOVY FRAME", end_frame)
@@ -272,6 +286,7 @@ def find_exact_frame(start_frame,end_frame,start_text,end_text): #bisection
                 od_do_bool_nove[2]=0 #neodmazavam
             else:
                 od_do_bool_nove[2]=1 #odmazavam
+            
 
     # Print the frame where the end text starts
     print('KONCOVE TITULKY ZACINAJU NA', high_frame)
@@ -339,6 +354,7 @@ def find_exact_frame(start_frame,end_frame,start_text,end_text): #bisection
 if methodOfRemoving == 1: #pouzivame keras
     success,image = videocap.read()
     while success:
+        
         if(count<8):
             image = image[yL:yR,xL:xR]  #orazena image, od:do a od:do
             cv2.imwrite("frame%d.jpg" % count, image)     # save frame as JPEG file 
@@ -355,6 +371,8 @@ if methodOfRemoving == 1: #pouzivame keras
                     print("",file=f)
                     print("FRAME",counting_frames,"Z", fps_total, file=f)
                 counting_frames = counting_frames + counting_frames_given
+                suma_progressu += progress_bar_first
+                print("PROGRESS: ",suma_progressu)
                 for text, box in prediction_groups[x]:
                     text_aktual.append(text)
                     with open('output.txt', 'a') as f:
@@ -364,6 +382,7 @@ if methodOfRemoving == 1: #pouzivame keras
                 similarity = s.ratio()
 
                 if((counting_frames-counting_frames_given) != 0):
+                    
                     print((counting_frames -(counting_frames_given*2))," je",text_predch,"a", (counting_frames - counting_frames_given), "je", text_aktual)
                     if similarity >= 0.4:
                         print("Text sa zhoduje alebo je veľmi podobný.")
@@ -400,6 +419,8 @@ if methodOfRemoving == 1: #pouzivame keras
                 print("",file=f)
                 print("FRAME",counting_frames,"Z", fps_total, file=f)
             counting_frames = counting_frames + counting_frames_given
+            suma_progressu += progress_bar_first
+            print("PROGRESS: ",suma_progressu)
             for text, box in prediction_groups[x]:
                 text_aktual.append(text)
                 with open('output.txt', 'a') as f:
@@ -434,6 +455,8 @@ if methodOfRemoving == 1: #pouzivame keras
     od_do_bool_stare[1] += 1 #extraframe preisottu
     vsetky_titulky.append(od_do_bool_stare[:])
     print("vsetky",vsetky_titulky)
+    pocet_jednotiek = len([lst for lst in vsetky_titulky if lst[-1] == 1])
+    print(pocet_jednotiek)
 
 
 if (video.isOpened()== False): 

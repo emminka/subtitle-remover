@@ -11,12 +11,12 @@
     <script>if (window.module) module = window.module;</script>
     <style>
         body {
-            background-color: #6D6A75;
+            background-color: #c2b9b0;
             font-family: Verdana, Geneva, Tahoma, sans-serif;
         }
 
         button:enabled {
-            background-color: #DCD0FF;
+            background-color:#b7df78;
             color: #3A3541;
             border: solid 1px #3A3541;
             border-radius: 12px;
@@ -38,7 +38,7 @@
         }
 
         button:disabled {
-            background-color: #B2B0B9;
+            background-color: #879b6a;
             color: #3A3541;
             border: solid 1px #3A3541;
             border-radius: 12px;
@@ -93,22 +93,58 @@
             left: 0;
             width: 200px;
             height: 100px;
-            border: 2px solid #DCD0FF;
-            background-color:rgba(155, 139, 139, 0.226);
+            border: 2px solid#b8e76d;
+            background-color:rgba(216, 243, 141, 0.247);
         }
 
         div.anchor {
-            width: 6px;
-            height: 6px;
-            background-color: #b7a6eb;
+            width: 8px;
+            height: 8px;
+            background-color:#b8e76d;
             position: absolute;
             border: 0;
             border-radius: 5px;
-        
-
-        
-
         }
+
+        /* The Modal (background) */
+        .modal {
+        display: none; /* Hidden by default */
+        position: fixed; /* Stay in place */
+        z-index: 1; /* Sit on top */
+        left: 0;
+        top: 0;
+        width: 100%; /* Full width */
+        height: 100%; /* Full height */
+        overflow: auto; /* Enable scroll if needed */
+        background-color: rgb(0,0,0); /* Fallback color */
+        background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+        }
+
+        /* Modal Content/Box */
+        .modal-content {
+        background-color: #fefefe;
+        margin: 15% auto; /* 15% from the top and centered */
+        padding: 20px;
+        border: 1px solid #888;
+        width: 80%; /* Could be more or less, depending on screen size */
+        }
+
+        /* The Close Button */
+        .close {
+        color: #aaa;
+        float: right;
+        font-size: 28px;
+        font-weight: bold;
+        }
+
+        .close:hover,
+        .close:focus {
+        color: black;
+        text-decoration: none;
+        cursor: pointer;
+        }
+
+
     </style>
     <link href="./toastr-master/build/toastr.css" rel="stylesheet"/>
     <script src="./toastr-master/toastr.js"></script>
@@ -125,7 +161,7 @@
             </select>
             <br></br>
             <div id="detect_every_x_sub" style="display:none;">
-                <label >Detect subtitle every&nbsp;</label>
+                <label >Detect subtitles every&nbsp;</label>
                 <br></br>
                 <input type="number" id="numberInput" min="1" max="200" style="font-size: 14px; width: 40px; height: 15PX;" value="30">
                 <label >&nbsp;frames. </label>
@@ -138,6 +174,16 @@
                 <option value="median">Median Blur</option>
             </select>
 
+        </div>
+    </div>
+
+    <!-- modalne okno -->
+    <div id="myModal" class="modal">
+        <!-- Modal content -->
+        <div class="modal-content">
+        <span class="close">&times;</span>
+        <label for="progress_bar">Subtitles removing progress:</label>
+        <progress id="progress_bar" value="0" max="1000"></progress>
         </div>
     </div>
 
@@ -180,6 +226,8 @@
         let metoda_odstranenia = 0; //0 je vsetko, 1 je keras
         let technika_odstranenia = 0; //0 je ns,1 telea, 2 gaus, 3 median
         let detection_on_every_x_frame = 30; 
+        let modal = document.getElementById("myModal");
+        let span = document.getElementsByClassName("close")[0];
 
     
         $("#file-upload").change(onFileUpload);
@@ -370,9 +418,10 @@
                 toastr.error("Number of frames for detecting subtitles is not in range. Minimal number is 1, maximal is 200.")
                 return;
             }
+            
+            modal.style.display = "block";
 
-
-            renderer.skript(leftUpX, leftUpY, RightDownX ,RightDownY, filePath, heightOfVideo, widthOfVideo);
+            renderer.skript(leftUpX, leftUpY, RightDownX ,RightDownY, filePath, heightOfVideo, widthOfVideo, metoda_odstranenia, technika_odstranenia,detection_on_every_x_frame);
             toastr.options = {
                 "closeButton": false,
                 "debug": false,
@@ -401,6 +450,7 @@
 
         // draggable dots around subtitle area
         let currentlyDraggedDot = null;
+
 
         //TL = top left
         function startDragTL(e) {
@@ -439,6 +489,10 @@
 
                 console.log("Som tu", sbLeft, sbTop, e.x, e.y)
             }
+        }
+
+        function openModal() {
+
         }
 
         

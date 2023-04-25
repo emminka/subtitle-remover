@@ -1,0 +1,34 @@
+<mxfile host="app.diagrams.net" modified="2023-04-15T00:48:34.848Z" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/112.0.0.0 Safari/537.36" etag="PNvzAxB-Hg67B80t8d5A" version="21.1.7" type="device">
+  <diagram name="Page-1" id="FUDObD4GBowzYmQQg1oZ">
+    <mxGraphModel dx="819" dy="404" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="auAmzRrBVC-5yVB06F5--2" value="" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="180" y="210" width="100" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="auAmzRrBVC-5yVB06F5--3" value="&lt;font style=&quot;font-size: 12px;&quot; face=&quot;computer modern&quot;&gt;OpenCV()&lt;/font&gt;" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" vertex="1" parent="1">
+          <mxGeometry x="195" y="220" width="70" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="auAmzRrBVC-5yVB06F5--4" value="" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="330" y="160" width="100" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="auAmzRrBVC-5yVB06F5--5" value="cv2.VideoCapture(" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" vertex="1" parent="1">
+          <mxGeometry x="320" y="170" width="120" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="auAmzRrBVC-5yVB06F5--6" value="" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="330" y="270" width="100" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="auAmzRrBVC-5yVB06F5--7" value="&lt;font style=&quot;font-size: 12px;&quot; face=&quot;computer modern&quot;&gt;Electron&lt;/font&gt;" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" vertex="1" parent="1">
+          <mxGeometry x="350" y="280" width="60" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="auAmzRrBVC-5yVB06F5--8" value="&lt;font style=&quot;font-size: 12px;&quot; face=&quot;computer modern&quot;&gt;videorozhranie&lt;/font&gt;" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" vertex="1" parent="1">
+          <mxGeometry x="300" y="130" width="100" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="auAmzRrBVC-5yVB06F5--9" value="&lt;font style=&quot;font-size: 12px;&quot; face=&quot;computer modern&quot;&gt;image&lt;/font&gt;" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" vertex="1" parent="1">
+          <mxGeometry x="335" y="240" width="50" height="30" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
