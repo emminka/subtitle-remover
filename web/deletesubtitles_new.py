@@ -88,10 +88,6 @@ height_python = int(video.get(cv2.CAP_PROP_FRAME_HEIGHT))
 print("ZA MINUTU JE",fpska)
 print("SPOLU JE",fps_total)
 
-my_frequency_for_bar = fps_total / counting_frames_given
-progress_bar_first = 500 // my_frequency_for_bar 
-
-print("navysujeme pooo", progress_bar_first)
 
 #fpska = video.get(cv2.CAP_PROP_FPS)
 counting_frames = 0
@@ -136,8 +132,24 @@ od_do_bool_stred = [0,0,0] #0 neodmazavam (prazdy text), 1 odmazavam (su tam tit
 vsetky_titulky = []
 kontrola_stare = 0
 kontrola_nove = 0
-suma_progressu = 0
+suma_progressu_prva_cast = 0
+suma_progressu_druha_cast = 700
 pocet_jednotiek = 0
+progress_bar_first = 0
+progress_bar_second = 0
+progress_bar_third = 1000
+
+
+my_frequency_for_bar = 0
+
+
+my_frequency_for_bar = fps_total / counting_frames_given
+progress_bar_first = 700 / my_frequency_for_bar 
+
+print("CAS_ODMAZANIA:",((fps_total//fpska)*8)//60)
+
+print("navysujeme pooo", progress_bar_first)
+
 
 def medianblur(frame_s, maska): #method gaussian blur
     medianblur_frame = cv2.medianBlur(frame_s, 71)
@@ -218,7 +230,10 @@ def not_zero_frame(titulky_start):
 def create_mask(titulky_start):
 
     #print("PROGRESS: 555")
-    
+    global suma_progressu_druha_cast
+    global progress_bar_second
+    suma_progressu_druha_cast += progress_bar_second
+    print("PROGRESS: ",int(suma_progressu_druha_cast))
     print("KONTROLKA", titulky_start)
 
     if titulky_start != 0:
@@ -248,11 +263,6 @@ def find_exact_frame(start_frame,end_frame,start_text,end_text): #bisection
     global od_do_bool_stred
     global kontrola_nove
     global kontrola_stare
-
-    #global suma_progressu
-    #suma_progressu += progress_bar_first
-    #print("PROGRESS: ",suma_progressu)
-
 
     print("ZACIATOCNY FRAME", start_frame)
     print("KONCOVY FRAME", end_frame)
@@ -371,8 +381,8 @@ if methodOfRemoving == 1: #pouzivame keras
                     print("",file=f)
                     print("FRAME",counting_frames,"Z", fps_total, file=f)
                 counting_frames = counting_frames + counting_frames_given
-                suma_progressu += progress_bar_first
-                print("PROGRESS: ",suma_progressu)
+                suma_progressu_prva_cast += progress_bar_first
+                print("PROGRESS: ",int(suma_progressu_prva_cast))
                 for text, box in prediction_groups[x]:
                     text_aktual.append(text)
                     with open('output.txt', 'a') as f:
@@ -419,8 +429,8 @@ if methodOfRemoving == 1: #pouzivame keras
                 print("",file=f)
                 print("FRAME",counting_frames,"Z", fps_total, file=f)
             counting_frames = counting_frames + counting_frames_given
-            suma_progressu += progress_bar_first
-            print("PROGRESS: ",suma_progressu)
+            suma_progressu_prva_cast += progress_bar_first
+            print("PROGRESS: ",int(suma_progressu_prva_cast))
             for text, box in prediction_groups[x]:
                 text_aktual.append(text)
                 with open('output.txt', 'a') as f:
@@ -457,7 +467,9 @@ if methodOfRemoving == 1: #pouzivame keras
     print("vsetky",vsetky_titulky)
     pocet_jednotiek = len([lst for lst in vsetky_titulky if lst[-1] == 1])
     print(pocet_jednotiek)
-
+    progress_bar_second = 250 / pocet_jednotiek
+else:
+    print("PRINT DVA")
 
 if (video.isOpened()== False): 
     print("Error opening video file")
@@ -557,7 +569,7 @@ while(video.isOpened()):
 cv2.destroyAllWindows()
 
 output.release()
-
+print("PROGRESS: 951")
 audio_clip = AudioFileClip(filepath)   #audio ziskavam lebo cv2 nepouziva
 modified_clip = VideoFileClip(new_name_same_path)
 final_clip = modified_clip.set_audio(audio_clip)
@@ -566,6 +578,7 @@ os.remove(new_name_same_path)
 
 
 print("Video has been released.")
+print("PROGRESS: ",progress_bar_third)
 casik = 0
 casik = str(datetime.timedelta(seconds=(time.time() - start_time)))
 print("Removing subtitles took",casik)

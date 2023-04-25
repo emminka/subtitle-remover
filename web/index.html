@@ -123,10 +123,14 @@
         /* Modal Content/Box */
         .modal-content {
         background-color: #fefefe;
-        margin: 15% auto; /* 15% from the top and centered */
+        margin: 20% auto; /* 15% from the top and centered */
         padding: 20px;
         border: 1px solid #888;
-        width: 80%; /* Could be more or less, depending on screen size */
+        width: 20%; /* Could be more or less, depending on screen size */
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
         }
 
         /* The Close Button */
@@ -144,6 +148,12 @@
         cursor: pointer;
         }
 
+
+        /* Center the progress bar */
+        #progress_bar {
+        width: 80%;
+        margin-top: 20px;
+        }
 
     </style>
     <link href="./toastr-master/build/toastr.css" rel="stylesheet"/>
@@ -181,9 +191,10 @@
     <div id="myModal" class="modal">
         <!-- Modal content -->
         <div class="modal-content">
-        <span class="close">&times;</span>
+        <span id ="close_button" class="close" style="display: none;">&times;</span>
         <label for="progress_bar">Subtitles removing progress:</label>
         <progress id="progress_bar" value="0" max="1000"></progress>
+        <p id="text_modal">Please wait. The process of deleting subtitles is being initiated. The estimated time for removal is being calculated. </p>
         </div>
     </div>
 
@@ -495,8 +506,6 @@
 
         }
 
-        
-        
 
         document.getElementById("anchor-TL").addEventListener("mousedown", startDragTL);
         document.body.addEventListener("mousemove", dragTL);
@@ -506,6 +515,15 @@
         document.body.addEventListener("mousemove", dragBR);
         document.body.addEventListener("mouseup", stopDragBR);
 
+        // Get the modal element
+        // Get the close button element
+        var closeBtn = document.getElementsByClassName("close")[0];
+
+        // Attach a click event listener to the close button
+        closeBtn.addEventListener("click", function() {
+        // Hide the modal by setting the display style to "none"
+        window.close();
+        });
 
     </script>
 </body>

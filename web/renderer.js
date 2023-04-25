@@ -5,7 +5,7 @@ const spawn = require("child_process").spawn;
 function skript(){
   let path_to_directory = __dirname;
   console.log(path_to_directory);
-  let path_to_script = path_to_directory + "\\deletesubtitles_new.py";
+  let path_to_script = path_to_directory + "/deletesubtitles_new.py";
   console.log(path_to_script);
   const pythonProcess = spawn(
     'python',
@@ -15,7 +15,7 @@ function skript(){
   pythonProcess.stdout.on('data', (data) => {
     const message = data.toString();
     console.log(message);
-    if (message.includes("PROGRESS")) {
+    if (message.includes("PROGRESS") ) {
       const rows = message.split("\n");
       rows.forEach(element => {
         if(element.startsWith("PROGRESS")) {
@@ -24,17 +24,48 @@ function skript(){
             const progress = match[1];
             const modalBar = document.getElementById('progress_bar');
             modalBar.value = progress;
-        }
-      }
+            if (progress == 1000){
+              document.getElementById('close_button').style.display = "block";
+            }
+            else if (progress == 951){
+              document.getElementById('text_modal').innerHTML = "The audio is being processed. Almost done."
+
+            }
+          }
+        };
       });
-      // Update the modal window with the message containing "done"
-      
     }
+      else if(message.includes("CAS_ODMAZANIA") ){
+        const rows = message.split("\n");
+        rows.forEach(element => {
+          if(element.startsWith("CAS_ODMAZANIA")) {
+            const match = element.match(/CAS_ODMAZANIA:\s*(\d+)/);
+            if (match) {
+              const cas_v_minutach = match[1];
+              const modalBar = document.getElementById('text_modal');
+              if(cas_v_minutach == 1){
+                modalBar.innerHTML = "Subtitles are being removed. Please do not close the window. Removal will take approximately 1 minute.";
+              }
+              else if(cas_v_minutach == 0){
+                modalBar.innerHTML = "Subtitles are being removed. Please do not close the window. Removal will take approximately less than 1 minute.";
+              }
+              else if(cas_v_minutach > 1 && cas_v_minutach < 60){
+                modalBar.innerHTML = "Subtitles are being removed. Please do not close the window. Removal will take approximately " + cas_v_minutach+" minutes.";
+              }
+              else if(cas_v_minutach > 60 ){
+                const cas_v_hodinach = Math.floor(cas_v_minutach / 60 * 10) / 10; // calculates hours with one decimal place
+                modalBar.innerHTML = "Subtitles are being removed. Please do not close the window. Removal will take approximately " + cas_v_hodinach.toFixed(1) + " hours.";
+              }
+              
+            };      
+          }   
+        });
+      }
   });
 
   pythonProcess.stderr.on('data', (data) => {
     const message = data.toString();
-    if (message.includes("error") || message.includes("Error")|| message.includes("Errno")) {
+    if (message.includes("Error")|| message.includes("Errno")) {
       console.error(message);
     }
     else{
