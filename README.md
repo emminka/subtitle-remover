@@ -1,5 +1,5 @@
-# Bakalarka
-Odmazávanie titulkov z videa
+# Bakalárska práca
+##Odmazávanie titulkov z videa
 
 otvor si prikazovy riadok 
 
