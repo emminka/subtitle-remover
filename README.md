@@ -10,7 +10,7 @@ Teraz je pre lepšiu prehladnosť vhodné vytvoriť si nový priečinok na praco
 
 Teraz v priečinku cez Príkazový riadok nainštalujeme virtuálne prostredie. Napíšeme príkaz `python -m venv .`, počkáme kým sa vykoná a následne napíšeme príkaz `.\Scripts\activate.bat` . Týmto sme si aktivovali virtuálne prostredie, a vidíme, že na začiatku riadku je napísané (virtual_env).
 
-Príkazom `python -m pip install --upgrade pip` overíme, či máme najnovšiu pip verziu. Ak nie, nainštaluje sa. Teraz prejdeme cez Príkazový riadok do priečinku aplikácie príkazom `cd <nazovapky>` a ďalej napíšeme príkaz `pip install -r .\resources\app\requirements.txt` čím sa nainštalujú potrebné balíčky pre funkčnosť aplikácie. Po nainštalovaní napíšeme do príkazoveho riadku `<nazovapky>.exe a tým sa aplikácia spustí. Pre podrobnejšie informácie je možné otvoriť v aplikácii konzolu stlačením kláves `Ctrl + Shift + I`. Po vypnutí aplikácie deaktivujeme virtuálne prostredie príkazom `deactivate`.
+Príkazom `python -m pip install --upgrade pip` overíme, či máme najnovšiu pip verziu. Ak nie, nainštaluje sa. Teraz prejdeme cez Príkazový riadok do priečinku aplikácie príkazom `cd <nazovapky>` a ďalej napíšeme príkaz `pip install -r .\resources\app\requirements.txt` čím sa nainštalujú potrebné balíčky pre funkčnosť aplikácie. Po nainštalovaní napíšeme do príkazoveho riadku `<nazovapky>.exe` a tým sa aplikácia spustí. Pre podrobnejšie informácie je možné otvoriť v aplikácii konzolu stlačením kláves `Ctrl + Shift + I`. Po vypnutí aplikácie deaktivujeme virtuálne prostredie príkazom `deactivate`.
 
 
 <b>Návod pre IT people:</b>
