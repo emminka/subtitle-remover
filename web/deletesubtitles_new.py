@@ -622,6 +622,3 @@ print("PROGRESS: ",progress_bar_third)
 casik = 0
 casik = str(datetime.timedelta(seconds=(time.time() - start_time)))
 print("Removing subtitles took",casik)
-
-
-
