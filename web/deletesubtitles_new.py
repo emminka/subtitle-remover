@@ -246,6 +246,7 @@ def create_mask(titulky_start):
     suma_progressu_druha_cast += progress_bar_second
     print("PROGRESS: ",int(suma_progressu_druha_cast))
     print("KONTROLKA", titulky_start)
+    sys.stdout.flush()
 
     if titulky_start != 0:
         zakladna_maska = not_zero_frame(titulky_start)
@@ -394,6 +395,7 @@ if methodOfRemoving == 1: #pouzivame keras
                 counting_frames = counting_frames + counting_frames_given
                 suma_progressu_prva_cast += progress_bar_first
                 print("PROGRESS: ",int(suma_progressu_prva_cast))
+                sys.stdout.flush()
                 for text, box in prediction_groups[x]:
                     text_aktual.append(text)
                     with open('output.txt', 'a') as f:
@@ -442,6 +444,7 @@ if methodOfRemoving == 1: #pouzivame keras
             counting_frames = counting_frames + counting_frames_given
             suma_progressu_prva_cast += progress_bar_first
             print("PROGRESS: ",int(suma_progressu_prva_cast))
+            sys.stdout.flush()
             for text, box in prediction_groups[x]:
                 text_aktual.append(text)
                 with open('output.txt', 'a') as f:
@@ -606,6 +609,7 @@ cv2.destroyAllWindows()
 
 output.release()
 print("PROGRESS: 951")
+sys.stdout.flush()
 audio_clip = AudioFileClip(filepath)   #audio ziskavam lebo cv2 nepouziva
 modified_clip = VideoFileClip(new_name_same_path)
 final_clip = modified_clip.set_audio(audio_clip)

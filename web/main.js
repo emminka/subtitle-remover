@@ -2,35 +2,17 @@ const { app, BrowserWindow, Menu, globalShortcut  } = require('electron')
 const path = require('path')
 const log = require('electron-log')
 
-/*
-const {PythonShell} = require('python-shell');
-
-let pyshell = new PythonShell('script.py');
-
-pyshell.send(JSON.stringify([10]))
-
-pyshell.on('message', function(message) {
-  console.log(message);
-})
-
-pyshell.end(function (err) {
-  if (err){
-    throw err;
-  };
-  console.log('finished');
-});*/
-
 function createWindow () {
   const win = new BrowserWindow({
     width: 1170,
     height: 729,
+    minWidth: 800,
+    minHeight: 600,
     webPreferences: {
       nodeIntegration: true,
       contextIsolation: false,
   }
   })
-
-  
 
   //win.setMenu(null)
 

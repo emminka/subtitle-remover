@@ -5,7 +5,7 @@ const spawn = require("child_process").spawn;
 function skript(){
   let path_to_directory = __dirname;
   console.log(path_to_directory);
-  let path_to_script = path_to_directory + "/deletesubtitles_new.py";
+  let path_to_script = path_to_directory + "\\deletesubtitles_new.py";
   console.log(path_to_script);
   const pythonProcess = spawn(
     'python',

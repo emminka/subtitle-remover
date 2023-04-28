@@ -244,17 +244,17 @@
         $("#file-upload").change(onFileUpload);
 
         let WannaHide = function(e){ //is now showed
-            console.log(controls_showed);
-            console.log("YEAH SME TU A SKRYVMAE PANEL");
+            //console.log(controls_showed);
+            //console.log("YEAH SME TU A SKRYVMAE PANEL");
             $("video").attr("controls", false); //hide them
             document.getElementById("ControlsButton").textContent  = 'Show Controls';
             controls_showed = 0;
-            console.log(controls_showed);
+            //console.log(controls_showed);
 
         }
 
         let WannaShow = function(e){ //is now hide
-            console.log("Wanna show");
+            //console.log("Wanna show");
             $("video").attr("controls", true); //show them
             document.getElementById("ControlsButton").textContent  = 'Hide Controls';
             controls_showed = 1;
@@ -262,7 +262,7 @@
 
         function onFileUpload(event) {
             filePath = $("#file-upload")[0].files[0].path;
-            console.log(filePath);
+            //console.log(filePath);
             $("video").attr("src", filePath);
             document.getElementById("SelectAreaButton").disabled = false; //urobim tlacitko select area aktivne
             document.getElementById("ControlsButton").disabled = false; //urobim tlacitko hide controls aktivne
@@ -275,17 +275,17 @@
             const numberInput = document.getElementById("numberInput");
             const detect_sub = document.getElementById("detect_every_x_sub");
 
-            console.log("Metoda je: " + metoda_odstranenia);
-            console.log("Technika je: " + technika_odstranenia);
+            //console.log("Metoda je: " + metoda_odstranenia);
+            //console.log("Technika je: " + technika_odstranenia);
             if (metoda_odstranenia == 1){
                 detect_sub.style.display = "flex";
-                console.log("MAME KERAS");
+                //console.log("MAME KERAS");
                 detection_on_every_x_frame = numberInput.value;
-                console.log("mame value" + detection_on_every_x_frame);
+                //console.log("mame value" + detection_on_every_x_frame);
             }
             else{
                 detect_sub.style.display = "none";
-                console.log("NEMAME KERAS");
+                //console.log("NEMAME KERAS");
             }
         }
         document.getElementById("detect_every_x_sub").addEventListener("change", getValueofSelect);
@@ -299,8 +299,8 @@
                 leftUpX = (e.clientX + window.pageXOffset);
                 leftUpY = (e.clientY + window.pageXOffset);
                 leftUpClicked = 1;
-                console.log("lava hore x" + leftUpX)
-                console.log("lava hore y" + leftUpY)
+                //console.log("lava hore x" + leftUpX)
+                //console.log("lava hore y" + leftUpY)
                 toastr.options = {
                     "closeButton": false,
                     "debug": false,
@@ -327,28 +327,28 @@
                 //document.getElementById("subtitle_area").style.display = "inline" ;
                 
                 WannaShow();
-                console.log("prava dole x" + RightDownX)
-                console.log("prava dole y" + RightDownY)
-                console.log("sirka videa" + widthOfVideo)
-                console.log("vyska videa" + heightOfVideo)
+                //console.log("prava dole x" + RightDownX)
+                //console.log("prava dole y" + RightDownY)
+                //console.log("sirka videa" + widthOfVideo)
+                //console.log("vyska videa" + heightOfVideo)
 
-                console.log("no toto by malo fungovat:::::::")
+                //console.log("no toto by malo fungovat:::::::")
                 heightOfVideo = $("video")[0].videoHeight; //vyska nahraneho videa
                 widthOfVideo = $("video")[0].videoWidth; //sirka nahraneho videa
 
-                console.log("vysoka origo", heightOfVideo)
-                console.log("siroka origo", widthOfVideo);
+                //console.log("vysoka origo", heightOfVideo)
+                //console.log("siroka origo", widthOfVideo);
                 heightOfVideoInApp = $("video").height(); //vyska videa v konzole
                 widthOfVideoInApp = $("video").width(); //sirka videa v konzole
-                console.log("vysoka app", heightOfVideoInApp)
-                console.log("siroka app", widthOfVideoInApp);
+                //console.log("vysoka app", heightOfVideoInApp)
+                //console.log("siroka app", widthOfVideoInApp);
 
                 
                 widthOfSubtArea = Math.abs(RightDownX - leftUpX);
                 heightOfSubtArea = Math.abs(leftUpY - RightDownY);
 
-                console.log("sirka" + widthOfSubtArea)
-                console.log("vyska" + heightOfSubtArea)
+                //console.log("sirka" + widthOfSubtArea)
+                //console.log("vyska" + heightOfSubtArea)
                 //zobrazim ramcek kde su titulky
 
                 $('div.absolute').css('top', leftUpY);
@@ -358,10 +358,12 @@
                 $("#subtitle_area").show();
 
                 console.log("CISLA PO NOVOM")
-                console.log("prava dole x" + RightDownX)
-                console.log("prava dole y" + RightDownY)
                 console.log("lava hore x" + leftUpX)
                 console.log("lava hore y" + leftUpY)
+                console.log("prava dole x" + RightDownX)
+                console.log("prava dole y" + RightDownY)
+                
+                
 
                 leftUpClicked = 2;
                 document.getElementById("DeleteSubtitlesButton").disabled = false; //urobim tlacitko delete subtitles aktivne
@@ -398,9 +400,9 @@
         }
 
         let ControlsClicked = function(e){
-            console.log("čo tu mame",controls_showed);
+            //console.log("čo tu mame",controls_showed);
             if (controls_showed === 0){ //controls are not showwed
-                console.log
+                //console.log
                 WannaShow();
             }
             else if (controls_showed === 1){//controls are  showwed
@@ -410,7 +412,7 @@
 
         let DeleteSubtitlesClicked = function(e){
             var area_to_be_deleted = document.getElementById("subtitle_area").getBoundingClientRect();
-            console.log(area_to_be_deleted.top, area_to_be_deleted.right, area_to_be_deleted.bottom, area_to_be_deleted.left);
+            console.log(area_to_be_deleted.left, area_to_be_deleted.top, area_to_be_deleted.right, area_to_be_deleted.bottom );
             
             metoda_odstranenia = document.getElementById("method_of_removing").selectedIndex;
             technika_odstranenia = document.getElementById("technique_of_removing").selectedIndex;
@@ -424,6 +426,8 @@
             leftUpY = Math.round(-8 - 2 - 10 +(leftUpY/heightOfVideoInApp)*heightOfVideo)
             RightDownX = Math.round(-8 - 2+ (RightDownX/widthOfVideoInApp) * widthOfVideo)
             RightDownY = Math.round(- 8 - 2 + (RightDownY/heightOfVideoInApp)*heightOfVideo)
+
+            console.log("Po kliknuti", leftUpX, leftUpY, RightDownX, RightDownY)
 
             if (0 > detection_on_every_x_frame || 200 < detection_on_every_x_frame){
                 toastr.error("Number of frames for detecting subtitles is not in range. Minimal number is 1, maximal is 200.")
@@ -486,7 +490,7 @@
 
         function startDragBR(e) {
             currentlyDraggedDot = "BR";
-            console.log("Start");
+            //console.log("Start");
         }
         
         function dragBR(e) {
@@ -499,6 +503,7 @@
                 $("#subtitle_area").css("height", e.y - sbTop);
 
                 console.log("Som tu", sbLeft, sbTop, e.x, e.y)
+
             }
         }
 
