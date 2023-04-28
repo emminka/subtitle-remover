@@ -76,7 +76,7 @@ fpska = video.get(cv2.CAP_PROP_FPS) #pocet fps za sekundu
 
 
 pipeline = keras_ocr.pipeline.Pipeline()
-f = open('output.txt','w') #zapisujem ake su titulky
+#f = open('output.txt','w') #zapisujem ake su titulky
 poleObrazkov = []
 fps_total = int(video.get(cv2.CAP_PROP_FRAME_COUNT)) #pocet framov celeho video
 videocap = cv2.VideoCapture(filepath)
@@ -207,17 +207,17 @@ def not_zero_frame(titulky_start):
     ret, img_titulky = videocap.read()
     img_titulky = img_titulky[yL:yR,xL:xR]
     img_titulky_gray = cv2.cvtColor(img_titulky, cv2.COLOR_BGR2GRAY)   #oblast s titulkami v ciernobielej
-    cv2.imwrite('img_titu.jpg', img_titulky_gray)
+    #cv2.imwrite('img_titu.jpg', img_titulky_gray)
 
 
     videocap.set(cv2.CAP_PROP_POS_FRAMES, bez_tituliek)
     ret, img_bez = videocap.read()
     img_bez = img_bez[yL:yR,xL:xR]
     img_bez_gray = cv2.cvtColor(img_bez, cv2.COLOR_BGR2GRAY) #oblast snimky pred danou snimkou v ciermnobielej
-    cv2.imwrite('img_bez.jpg', img_bez_gray)
+    #cv2.imwrite('img_bez.jpg', img_bez_gray)
 
     img_subtract = cv2.absdiff(img_titulky_gray, img_bez_gray) #odcitanie
-    cv2.imwrite('img_subst.jpg', img_subtract)
+    #cv2.imwrite('img_subst.jpg', img_subtract)
 
 
     ret, thresh = cv2.threshold(img_subtract,50, 255, cv2.THRESH_BINARY) #theshold
@@ -379,8 +379,8 @@ if methodOfRemoving == 1: #pouzivame keras
         
         if(count<8):
             image = image[yL:yR,xL:xR]  #orazena image, od:do a od:do
-            cv2.imwrite("frame%d.jpg" % count, image)     # save frame as JPEG file 
-            poleObrazkov.append("frame%d.jpg" % count)
+            #cv2.imwrite("frame%d.jpg" % count, image)     # save frame as JPEG file 
+            poleObrazkov.append(image)
             #print(poleObrazkov)
             cislo_frame += counting_frames_given #cca 30framov ma sekunda
             videocap.set(cv2.CAP_PROP_POS_FRAMES, cislo_frame)
@@ -389,17 +389,17 @@ if methodOfRemoving == 1: #pouzivame keras
             images = [keras_ocr.tools.read(img) for img in poleObrazkov]
             prediction_groups = pipeline.recognize(images)
             for x in range(len(images)):
-                with open('output.txt', 'a') as f:
-                    print("",file=f)
-                    print("FRAME",counting_frames,"Z", fps_total, file=f)
+                #with open('output.txt', 'a') as f:
+                    #print("",file=f)
+                    #print("FRAME",counting_frames,"Z", fps_total, file=f)
                 counting_frames = counting_frames + counting_frames_given
                 suma_progressu_prva_cast += progress_bar_first
                 print("PROGRESS: ",int(suma_progressu_prva_cast))
                 sys.stdout.flush()
                 for text, box in prediction_groups[x]:
                     text_aktual.append(text)
-                    with open('output.txt', 'a') as f:
-                        print(text, file=f)
+                    #with open('output.txt', 'a') as f:
+                        #print(text, file=f)
 
                 s = SequenceMatcher(None, text_aktual, text_predch)
                 similarity = s.ratio()
@@ -438,17 +438,17 @@ if methodOfRemoving == 1: #pouzivame keras
         images = [keras_ocr.tools.read(img) for img in poleObrazkov]
         prediction_groups = pipeline.recognize(images)
         for x in range(len(images)):
-            with open('output.txt', 'a') as f:
-                print("",file=f)
-                print("FRAME",counting_frames,"Z", fps_total, file=f)
+            #with open('output.txt', 'a') as f:
+                #print("",file=f)
+                #print("FRAME",counting_frames,"Z", fps_total, file=f)
             counting_frames = counting_frames + counting_frames_given
             suma_progressu_prva_cast += progress_bar_first
             print("PROGRESS: ",int(suma_progressu_prva_cast))
             sys.stdout.flush()
             for text, box in prediction_groups[x]:
                 text_aktual.append(text)
-                with open('output.txt', 'a') as f:
-                    print(text, file=f)
+                #with open('output.txt', 'a') as f:
+                    #print(text, file=f)
 
             s = SequenceMatcher(None, text_aktual, text_predch)
             similarity = s.ratio()
