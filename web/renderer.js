@@ -1,5 +1,3 @@
-const { ipcMain } = require('electron');
-const { ipcRenderer } = require('electron');
 const spawn = require("child_process").spawn;
 
 function skript(){
@@ -9,7 +7,7 @@ function skript(){
   console.log(path_to_script);
   const pythonProcess = spawn(
     'python',
-    [path_to_script, "-a",leftUpX, "-b",leftUpY, "-c", RightDownX ,"-d",RightDownY, "-e", filePath, "-f", heightOfVideo, "-g", widthOfVideo, "-h", metoda_odstranenia, "-i" , technika_odstranenia, "-j" , detection_on_every_x_frame],
+    [path_to_script, "-a", leftUpX, "-b", leftUpY, "-c", RightDownX ,"-d",RightDownY, "-e", filePath, "-f", heightOfVideo, "-g", widthOfVideo, "-h", metoda_odstranenia, "-i" , technika_odstranenia, "-j" , detection_on_every_x_frame],
   );  //definujem co je ten moj skript
 
   pythonProcess.stdout.on('data', (data) => {
@@ -57,7 +55,6 @@ function skript(){
                 const cas_v_hodinach = Math.floor(cas_v_minutach / 60 * 10) / 10; // calculates hours with one decimal place
                 modalBar.innerHTML = "Subtitles are being removed. Please do not close the window. Removal will take approximately " + cas_v_hodinach.toFixed(1) + " hours.";
               }
-              
             };      
           }   
         });
@@ -74,7 +71,7 @@ function skript(){
     }
   });
 
-  console.log("Zavolalli smne skript");
+  console.log("Zavolalli sme skript");
 }
 
-module.exports = { skript }; //exportujem python skript
+module.exports = { skript };

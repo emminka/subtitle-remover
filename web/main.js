@@ -1,8 +1,6 @@
-const { app, BrowserWindow, Menu, globalShortcut  } = require('electron')
-const path = require('path')
-const log = require('electron-log')
+const { app, BrowserWindow, Menu, globalShortcut } = require('electron')
 
-function createWindow () {
+function createWindow() {
   const win = new BrowserWindow({
     width: 1170,
     height: 729,
@@ -11,11 +9,8 @@ function createWindow () {
     webPreferences: {
       nodeIntegration: true,
       contextIsolation: false,
-  }
+    }
   })
-
-  //win.setMenu(null)
-
   win.loadFile('index.html')
 
   // Remove the default menu bar
@@ -52,4 +47,3 @@ app.on('window-all-closed', () => {
     app.quit()
   };
 });
-

@@ -2,6 +2,7 @@
 /web/titulky-win32-x64
 /node_modules
 /sub_remover
+**.mp4
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
