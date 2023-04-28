@@ -318,7 +318,7 @@
         let handleClick = function (e) {
             if (leftUpClicked == 0) {
                 leftUpX = (e.clientX + window.pageXOffset);
-                leftUpY = (e.clientY + window.pageXOffset);
+                leftUpY = (e.clientY + window.pageYOffset);
                 leftUpClicked = 1;
                 //console.log("lava hore x" + leftUpX)
                 //console.log("lava hore y" + leftUpY)
@@ -344,7 +344,7 @@
             }
             else if (leftUpClicked == 1) {
                 RightDownX = (e.clientX + window.pageXOffset);
-                RightDownY = (e.clientY + window.pageXOffset);
+                RightDownY = (e.clientY + window.pageYOffset);
                 //document.getElementById("subtitle_area").style.display = "inline" ;
 
                 WannaShow();
@@ -433,15 +433,17 @@
 
         let DeleteSubtitlesClicked = function (e) {
             var area_to_be_deleted = document.getElementById("subtitle_area").getBoundingClientRect();
-            console.log(area_to_be_deleted.left, area_to_be_deleted.top, area_to_be_deleted.right, area_to_be_deleted.bottom);
+            
 
             metoda_odstranenia = document.getElementById("method_of_removing").selectedIndex;
             technika_odstranenia = document.getElementById("technique_of_removing").selectedIndex;
 
-            leftUpX = area_to_be_deleted.left;
-            leftUpY = area_to_be_deleted.top;
-            RightDownX = area_to_be_deleted.right;
-            RightDownY = area_to_be_deleted.bottom;
+            leftUpX = area_to_be_deleted.left  + window.pageXOffset ;
+            leftUpY = area_to_be_deleted.top  + window.pageYOffset;
+            RightDownX = area_to_be_deleted.right  + window.pageXOffset;
+            RightDownY = area_to_be_deleted.bottom  + window.pageYOffset;
+
+            console.log(area_to_be_deleted.left, area_to_be_deleted.top, area_to_be_deleted.right, area_to_be_deleted.bottom);
 
             leftUpX = Math.round(-8 - 2 - 10 + (leftUpX / widthOfVideoInApp) * widthOfVideo) //preisottu o kusok viac pielov, 8 je kvoli umiwstnneniu videa
             leftUpY = Math.round(-8 - 2 - 10 + (leftUpY / heightOfVideoInApp) * heightOfVideo)
@@ -495,8 +497,8 @@
 
         function dragTL(e) {
             if (currentlyDraggedDot == "TL") {
-                $("#subtitle_area").css("left", e.x);
-                $("#subtitle_area").css("top", e.y);
+                $("#subtitle_area").css("left", e.x  + window.pageXOffset);
+                $("#subtitle_area").css("top", e.y  + window.pageYOffset);
             }
         }
 
@@ -520,8 +522,8 @@
                 const sbLeft = parseInt($("#subtitle_area").css("left"), 10);
                 const sbTop = parseInt($("#subtitle_area").css("top"), 10);
 
-                $("#subtitle_area").css("width", e.x - sbLeft);
-                $("#subtitle_area").css("height", e.y - sbTop);
+                $("#subtitle_area").css("width", e.x - sbLeft  + window.pageXOffset);
+                $("#subtitle_area").css("height", e.y - sbTop  + window.pageYOffset);
 
                 console.log("Som tu", sbLeft, sbTop, e.x, e.y)
 
