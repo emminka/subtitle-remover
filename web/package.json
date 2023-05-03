@@ -1,9 +1,9 @@
 {
-  "name": "my-electron-app",
+  "name": "hardsub-remover",
   "version": "1.0.0",
-  "description": "Hello World!",
+  "description": "Electron app for removing harsubs in videos.",
   "main": "main.js",
-  "author": "Jane Doe",
+  "author": "Emma Krompascikova",
   "license": "MIT",
   "devDependencies": {
     "@electron-forge/cli": "^6.1.1",

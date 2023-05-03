@@ -24,7 +24,7 @@ function skript() {
             modalBar.value = progress;
             if (progress == 1000) {
               document.getElementById('close_button').style.display = "block";
-              document.getElementById('text_modal').innerHTML = "Video has been succesfully released. It is in the same foder as original video. You can close the app now."
+              document.getElementById('text_modal').innerHTML = "Video has been succesfully released. It is in the same folder as original video. You can close the app now."
             }
             else if (progress == 951) {
               document.getElementById('text_modal').innerHTML = "The audio is being processed. Almost done."
