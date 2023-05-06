@@ -162,12 +162,12 @@ else:
 print("navysujeme pooo", progress_bar_first)
 
 
-def medianblur(frame_s, maska): #method gaussian blur
+def medianblur(frame_s, maska): #method median blur
     medianblur_frame = cv2.medianBlur(frame_s, 71)
     mask3 = cv2.cvtColor(maska,cv2.COLOR_GRAY2RGB)#menime na 3farebnu
     normalized_mask3 = mask3.astype('float32') / 255.0
-    combined_image = np.zeros_like(frame_s)
-    combined_image.fill(255)
+    #combined_image = np.zeros_like(frame_s)
+    #combined_image.fill(255)
     a = np.multiply(1 - normalized_mask3, frame_s.astype('float32')) / 255.0
     b = np.multiply(normalized_mask3, medianblur_frame.astype('float32')) / 255.0
     no_subtitles_frame = np.add(a,b)
@@ -181,8 +181,8 @@ def gaussian(frame_s, maska): #method gaussian blur
     dilatedMask = cv2.dilate(maska, kernel, iterations=5) #dilatujeme aby bol usek kusok vasci
     mask3 = cv2.cvtColor(dilatedMask,cv2.COLOR_GRAY2RGB)#menime na 3farebnu
     normalized_mask3 = mask3.astype('float32') / 255.0
-    combined_image = np.zeros_like(frame_s)
-    combined_image.fill(255)
+    #combined_image = np.zeros_like(frame_s)
+    #combined_image.fill(255)
     a = np.multiply(1 - normalized_mask3, frame_s.astype('float32')) / 255.0
     b = np.multiply(normalized_mask3, gauss_frame.astype('float32')) / 255.0
     no_subtitles_frame = np.add(a,b)
@@ -209,7 +209,6 @@ def not_zero_frame(titulky_start):
     img_titulky_gray = cv2.cvtColor(img_titulky, cv2.COLOR_BGR2GRAY)   #oblast s titulkami v ciernobielej
     #cv2.imwrite('img_titu.jpg', img_titulky_gray)
 
-
     videocap.set(cv2.CAP_PROP_POS_FRAMES, bez_tituliek)
     ret, img_bez = videocap.read()
     img_bez = img_bez[yL:yR,xL:xR]
@@ -218,7 +217,6 @@ def not_zero_frame(titulky_start):
 
     img_subtract = cv2.absdiff(img_titulky_gray, img_bez_gray) #odcitanie
     #cv2.imwrite('img_subst.jpg', img_subtract)
-
 
     ret, thresh = cv2.threshold(img_subtract,50, 255, cv2.THRESH_BINARY) #theshold
 
