@@ -95,7 +95,7 @@ new_name_same_path += suffix;
 suffix_final = "_noSUB_yesSOUND.mp4"
 new_name_same_path_final = filepath.rsplit(".", 1)[0];
 new_name_same_path_final += suffix_final;
-print(new_name_same_path_path)
+print(new_name_same_path_final)
 
 mask = np.zeros((height_python,width_python,3),np.uint8) #make black mask in size of video
 output = cv2.VideoWriter(new_name_same_path, -1, fps_second, (width_of_video,height_of_video)) #final video
