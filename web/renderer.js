@@ -1,14 +1,21 @@
+////////////////////////
+// Emma Krompascikova //
+// Bachelor Thesis    //
+// Hardsub Remover    //
+// May 2023           //
+////////////////////////
+
 const spawn = require("child_process").spawn;
 
-function skript() {
+function call_script() {
   let path_to_directory = __dirname;
   console.log(path_to_directory);
-  let path_to_script = path_to_directory + "\\deletesubtitles_new.py";
+  let path_to_script = path_to_directory + "\\delete_subtitles.py";
   console.log(path_to_script);
   const pythonProcess = spawn(
     'python',
-    [path_to_script, "-a", leftUpX, "-b", leftUpY, "-c", RightDownX, "-d", RightDownY, "-e", filePath, "-f", heightOfVideo, "-g", widthOfVideo, "-h", metoda_odstranenia, "-i", technika_odstranenia, "-j", detection_on_every_x_frame],
-  );  //definujem co je ten moj skript
+    [path_to_script, "-a", leftUpX, "-b", leftUpY, "-c", RightDownX, "-d", RightDownY, "-e", filePath, "-f", heightOfVideo, "-g", widthOfVideo, "-h", method_of_removing, "-i", technique_of_removing, "-j", detection_on_every_x_frame],
+  );  //define what goes into my script
 
   pythonProcess.stdout.on('data', (data) => {
     const message = data.toString();
@@ -34,26 +41,26 @@ function skript() {
         };
       });
     }
-    else if (message.includes("CAS_ODMAZANIA")) {
+    else if (message.includes("TIME_OF_REMOVING")) {
       const rows = message.split("\n");
       rows.forEach(element => {
-        if (element.startsWith("CAS_ODMAZANIA")) {
-          const match = element.match(/CAS_ODMAZANIA:\s*(\d+)/);
+        if (element.startsWith("TIME_OF_REMOVING")) {
+          const match = element.match(/TIME_OF_REMOVING:\s*(\d+)/);
           if (match) {
-            const cas_v_minutach = match[1];
+            const time_in_minutes = match[1];
             const modalBar = document.getElementById('text_modal');
-            if (cas_v_minutach == 1) {
+            if (time_in_minutes == 1) {
               modalBar.innerHTML = "Subtitles are being removed. Please do not close the window. Removal will take approximately 1 minute.";
             }
-            else if (cas_v_minutach == 0) {
+            else if (time_in_minutes == 0) {
               modalBar.innerHTML = "Subtitles are being removed. Please do not close the window. Removal will take approximately less than 1 minute.";
             }
-            else if (cas_v_minutach > 1 && cas_v_minutach < 60) {
-              modalBar.innerHTML = "Subtitles are being removed. Please do not close the window. Removal will take approximately " + cas_v_minutach + " minutes.";
+            else if (time_in_minutes > 1 && time_in_minutes < 60) {
+              modalBar.innerHTML = "Subtitles are being removed. Please do not close the window. Removal will take approximately " + time_in_minutes + " minutes.";
             }
-            else if (cas_v_minutach > 60) {
-              const cas_v_hodinach = Math.floor(cas_v_minutach / 60 * 10) / 10; // calculates hours with one decimal place
-              modalBar.innerHTML = "Subtitles are being removed. Please do not close the window. Removal will take approximately " + cas_v_hodinach.toFixed(1) + " hours.";
+            else if (time_in_minutes > 60) {
+              const time_in_hours = Math.floor(time_in_minutes / 60 * 10) / 10; // calculates hours with one decimal place
+              modalBar.innerHTML = "Subtitles are being removed. Please do not close the window. Removal will take approximately " + time_in_hours.toFixed(1) + " hours.";
             }
           };
         }
@@ -70,8 +77,7 @@ function skript() {
       console.warn(message);
     }
   });
-
-  console.log("Zavolalli sme skript");
+  console.log("Script was called.");
 }
 
-module.exports = { skript };
+module.exports = { call_script };

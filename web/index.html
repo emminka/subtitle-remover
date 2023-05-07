@@ -57,9 +57,6 @@
             margin-right: 10px;
             max-width: 1000px;
             max-height: 500px;
-            /*position: fixed;*/
-            /*top: 0;
-            left: 0;*/
         }
 
         .empty-video {
@@ -116,44 +113,31 @@
             border-radius: 5px;
         }
 
-        /* The Modal (background) */
         .modal {
             display: none;
-            /* Hidden by default */
             position: fixed;
-            /* Stay in place */
             z-index: 1;
-            /* Sit on top */
             left: 0;
             top: 0;
             width: 100%;
-            /* Full width */
             height: 100%;
-            /* Full height */
             overflow: auto;
-            /* Enable scroll if needed */
             background-color: rgb(0, 0, 0);
-            /* Fallback color */
             background-color: rgba(0, 0, 0, 0.4);
-            /* Black w/ opacity */
         }
 
-        /* Modal Content/Box */
         .modal-content {
             background-color: #fefefe;
             margin: 20% auto;
-            /* 15% from the top and centered */
             padding: 20px;
             border: 1px solid #888;
             width: 20%;
-            /* Could be more or less, depending on screen size */
             flex-direction: column;
             justify-content: center;
             align-items: center;
             text-align: center;
         }
 
-        /* The Close Button */
         .close {
             color: #aaa;
             float: right;
@@ -168,8 +152,6 @@
             cursor: pointer;
         }
 
-
-        /* Center the progress bar */
         #progress_bar {
             width: 80%;
             margin-top: 20px;
@@ -201,17 +183,15 @@
             </div>
             <label for="technique_of_removing">Technique of Removing:</label>
             <select id="technique_of_removing" onchange="getValueofSelect()">
-                <option value="inpaint_NS">INPAINT_NS</option>
-                <option value="inpaint_TELEA">INPAINT_TELEA</option>
+                <option value="inpaint_NS">Inpainting NS</option>
+                <option value="inpaint_TELEA">Inpainting Telea</option>
                 <option value="gaus">Gaussian Blur</option>
                 <option value="median">Median Blur</option>
             </select>
         </div>
     </div>
 
-    <!-- modalne okno -->
     <div id="myModal" class="modal">
-        <!-- Modal content -->
         <div class="modal-content">
             <span id="close_button" class="close" style="display: none;">&times;</span>
             <label for="progress_bar">Subtitles removing progress:</label>
@@ -256,26 +236,21 @@
         let filePath;
         let directoryPath;
         let controls_showed = 0; //controls are not showwed
-        let metoda_odstranenia = 0; //0 je vsetko, 1 je keras
-        let technika_odstranenia = 0; //0 je ns,1 telea, 2 gaus, 3 median
-        let detection_on_every_x_frame = 30;
+        let method_of_removing = 0; //0 is all, 1 je keras
+        let technique_of_removing = 0; //0 ns,1 telea, 2 gaus, 3 median
+        let detection_on_every_x_frame = 30; //default odmazavame kazdych 30
         let modal = document.getElementById("myModal");
         let span = document.getElementsByClassName("close")[0];
-
 
         $("#file-upload").change(onFileUpload);
 
         let WannaHide = function (e) { //is now showed
-            //console.log(controls_showed);
-            //console.log("YEAH SME TU A SKRYVMAE PANEL");
             $("video").attr("controls", false); //hide them
             document.getElementById("ControlsButton").textContent = 'Show Controls';
             controls_showed = 0;
-            //console.log(controls_showed);
         }
 
         let WannaShow = function (e) { //is now hide
-            //console.log("Wanna show");
             $("video").attr("controls", true); //show them
             document.getElementById("ControlsButton").textContent = 'Hide Controls';
             controls_showed = 1;
@@ -283,35 +258,28 @@
 
         function onFileUpload(event) {
             filePath = $("#file-upload")[0].files[0].path;
-            //console.log(filePath);
             $("video").attr("src", filePath);
             $("video").removeClass("empty-video"); 
-            document.getElementById("SelectAreaButton").disabled = false; //urobim tlacitko select area aktivne
-            document.getElementById("ControlsButton").disabled = false; //urobim tlacitko hide controls aktivne
+            document.getElementById("SelectAreaButton").disabled = false; //make button select area active
+            document.getElementById("ControlsButton").disabled = false; //make button hide controls active
             WannaShow();
         }
 
         function getValueofSelect() {
-            const metoda_odstranenia = document.getElementById("method_of_removing").selectedIndex;
-            const technika_odstranenia = document.getElementById("technique_of_removing").selectedIndex;
+            const method_of_removing = document.getElementById("method_of_removing").selectedIndex;
+            const technique_of_removing = document.getElementById("technique_of_removing").selectedIndex;
             const numberInput = document.getElementById("numberInput");
             const detect_sub = document.getElementById("detect_every_x_sub");
 
-            //console.log("Metoda je: " + metoda_odstranenia);
-            //console.log("Technika je: " + technika_odstranenia);
-            if (metoda_odstranenia == 1) {
+            if (method_of_removing == 1) {
                 detect_sub.style.display = "inline-block";
-                //console.log("MAME KERAS");
                 detection_on_every_x_frame = numberInput.value;
-                //console.log("mame value" + detection_on_every_x_frame);
             }
             else {
                 detect_sub.style.display = "none";
-                //console.log("NEMAME KERAS");
             }
         }
         document.getElementById("detect_every_x_sub").addEventListener("change", getValueofSelect);
-
         document.getElementById("method_of_removing").onchange = getValueofSelect;
         document.getElementById("technique_of_removing").onchange = getValueofSelect;
 
@@ -320,8 +288,6 @@
                 leftUpX = (e.clientX + window.pageXOffset);
                 leftUpY = (e.clientY + window.pageYOffset);
                 leftUpClicked = 1;
-                //console.log("lava hore x" + leftUpX)
-                //console.log("lava hore y" + leftUpY)
                 toastr.options = {
                     "closeButton": false,
                     "debug": false,
@@ -340,57 +306,28 @@
                     "hideMethod": "fadeOut"
                 }
                 toastr["info"]("Please select down right corner of subtitles area.", "Down Right Corner")
-                //alert("Select down right corner of subtitle area");
             }
             else if (leftUpClicked == 1) {
                 RightDownX = (e.clientX + window.pageXOffset);
                 RightDownY = (e.clientY + window.pageYOffset);
-                //document.getElementById("subtitle_area").style.display = "inline" ;
 
                 WannaShow();
-                //console.log("prava dole x" + RightDownX)
-                //console.log("prava dole y" + RightDownY)
-                //console.log("sirka videa" + widthOfVideo)
-                //console.log("vyska videa" + heightOfVideo)
-
-                //console.log("no toto by malo fungovat:::::::")
-                heightOfVideo = $("video")[0].videoHeight; //vyska nahraneho videa
-                widthOfVideo = $("video")[0].videoWidth; //sirka nahraneho videa
-
-                //console.log("vysoka origo", heightOfVideo)
-                //console.log("siroka origo", widthOfVideo);
-                heightOfVideoInApp = $("video").height(); //vyska videa v konzole
-                widthOfVideoInApp = $("video").width(); //sirka videa v konzole
-                //console.log("vysoka app", heightOfVideoInApp)
-                //console.log("siroka app", widthOfVideoInApp);
-
-
+                heightOfVideo = $("video")[0].videoHeight;
+                widthOfVideo = $("video")[0].videoWidth;
+                heightOfVideoInApp = $("video").height();
+                widthOfVideoInApp = $("video").width();
                 widthOfSubtArea = Math.abs(RightDownX - leftUpX);
                 heightOfSubtArea = Math.abs(leftUpY - RightDownY);
-
-                //console.log("sirka" + widthOfSubtArea)
-                //console.log("vyska" + heightOfSubtArea)
-                //zobrazim ramcek kde su titulky
-
+                //show area of subtitles
                 $('div.absolute').css('top', leftUpY);
                 $('div.absolute').css('left', leftUpX);
                 $('div.absolute').css('width', widthOfSubtArea);
                 $('div.absolute').css('height', heightOfSubtArea);
                 $("#subtitle_area").show();
 
-                console.log("CISLA PO NOVOM")
-                console.log("lava hore x" + leftUpX)
-                console.log("lava hore y" + leftUpY)
-                console.log("prava dole x" + RightDownX)
-                console.log("prava dole y" + RightDownY)
-
-
-
                 leftUpClicked = 2;
-                document.getElementById("DeleteSubtitlesButton").disabled = false; //urobim tlacitko delete subtitles aktivne
-
+                document.getElementById("DeleteSubtitlesButton").disabled = false; //make button delete subtitles actile
             }
-
             e.preventDefault();
         }
 
@@ -417,13 +354,10 @@
                 "hideMethod": "fadeOut"
             }
             toastr["info"]("Please select upper left corner of subtitles area.", "Upper Left Corner")
-            //alert("Select upper left corner of subtitle area");
         }
 
         let ControlsClicked = function (e) {
-            //console.log("čo tu mame",controls_showed);
             if (controls_showed === 0) { //controls are not showwed
-                //console.log
                 WannaShow();
             }
             else if (controls_showed === 1) {//controls are  showwed
@@ -433,10 +367,8 @@
 
         let DeleteSubtitlesClicked = function (e) {
             var area_to_be_deleted = document.getElementById("subtitle_area").getBoundingClientRect();
-            
-
-            metoda_odstranenia = document.getElementById("method_of_removing").selectedIndex;
-            technika_odstranenia = document.getElementById("technique_of_removing").selectedIndex;
+            method_of_removing = document.getElementById("method_of_removing").selectedIndex;
+            technique_of_removing = document.getElementById("technique_of_removing").selectedIndex;
 
             leftUpX = area_to_be_deleted.left  + window.pageXOffset ;
             leftUpY = area_to_be_deleted.top  + window.pageYOffset;
@@ -459,7 +391,7 @@
 
             modal.style.display = "block";
 
-            renderer.skript(leftUpX, leftUpY, RightDownX, RightDownY, filePath, heightOfVideo, widthOfVideo, metoda_odstranenia, technika_odstranenia, detection_on_every_x_frame);
+            renderer.call_script(leftUpX, leftUpY, RightDownX, RightDownY, filePath, heightOfVideo, widthOfVideo, method_of_removing, technique_of_removing, detection_on_every_x_frame);
             toastr.options = {
                 "closeButton": false,
                 "debug": false,
@@ -479,7 +411,6 @@
             }
             toastr.success("Subtitles are being removed and the new video will be saved in the same directory as the uploaded video.", "Removing subtitles")
 
-            //alert("Subtitles will be removed and the new video will be saved in the same directory as the uploaded video.")
         }
 
         SelectAreaButton.addEventListener("mousedown", SelectAreaClicked, false);
@@ -488,7 +419,6 @@
 
         // draggable dots around subtitle area
         let currentlyDraggedDot = null;
-
 
         //TL = top left
         function startDragTL(e) {
@@ -513,11 +443,9 @@
 
         function startDragBR(e) {
             currentlyDraggedDot = "BR";
-            //console.log("Start");
         }
 
         function dragBR(e) {
-            //console.log("Drag", currentlyDraggedDot);
             if (currentlyDraggedDot == "BR") {
                 const sbLeft = parseInt($("#subtitle_area").css("left"), 10);
                 const sbTop = parseInt($("#subtitle_area").css("top"), 10);
@@ -526,25 +454,18 @@
                 $("#subtitle_area").css("height", e.y - sbTop  + window.pageYOffset);
 
                 console.log("Som tu", sbLeft, sbTop, e.x, e.y)
-
             }
         }
 
         document.getElementById("anchor-TL").addEventListener("mousedown", startDragTL);
         document.body.addEventListener("mousemove", dragTL);
         document.body.addEventListener("mouseup", stopDragTL);
-
         document.getElementById("anchor-BR").addEventListener("mousedown", startDragBR);
         document.body.addEventListener("mousemove", dragBR);
         document.body.addEventListener("mouseup", stopDragBR);
-
-        // Get the modal element
-        // Get the close button element
         var closeBtn = document.getElementsByClassName("close")[0];
 
-        // Attach a click event listener to the close button
         closeBtn.addEventListener("click", function () {
-            // Hide the modal by setting the display style to "none"
             window.close();
         });
 
