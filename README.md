@@ -4,7 +4,7 @@ Autor: Emma Krompaščíková
 Akademický rok: 2022/23
 
 ## Štruktúra repozitára
-CD-ROM
+```CD-ROM
 |-app/
 | |-resources/
 | | |-app/     
@@ -35,7 +35,7 @@ CD-ROM
 |   |-video3.mp4
 |   |-video4.mp4
 |-video.mp4
-
+```
 ## Závislosti
 - OS Windows 10
 - Python >=3.8 a <3.10
