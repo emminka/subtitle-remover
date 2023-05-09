@@ -10,7 +10,7 @@ Akademický rok: 2022/23
 | | |-app/     
 | |   |-delete_subtitles.py
 | |   |-index.html
-| |   |-mais.js
+| |   |-main.js
 | |   |-package.json
 | |   |-renderer.js
 | |   |-requirements.txt
