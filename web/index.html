@@ -1,3 +1,10 @@
+<!---------------------->
+<!--Emma Krompascikova-->
+<!--Bachelor Thesis----->
+<!--Hardsub Remover----->
+<!--May 2023------------>
+<!---------------------->
+
 <!DOCTYPE html>
 <html>
 
@@ -305,7 +312,7 @@
                     "showMethod": "fadeIn",
                     "hideMethod": "fadeOut"
                 }
-                toastr["info"]("Please select down right corner of subtitles area.", "Down Right Corner")
+                toastr["info"]("Please select bottom right corner of subtitles area.", "Bottom Right Corner")
             }
             else if (leftUpClicked == 1) {
                 RightDownX = (e.clientX + window.pageXOffset);
@@ -453,7 +460,6 @@
                 $("#subtitle_area").css("width", e.x - sbLeft  + window.pageXOffset);
                 $("#subtitle_area").css("height", e.y - sbTop  + window.pageYOffset);
 
-                console.log("Som tu", sbLeft, sbTop, e.x, e.y)
             }
         }
 

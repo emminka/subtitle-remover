@@ -55,6 +55,9 @@ function call_script() {
             else if (time_in_minutes == 0) {
               modalBar.innerHTML = "Subtitles are being removed. Please do not close the window. Removal will take approximately less than 1 minute.";
             }
+            else if (time_in_minutes == 60) {
+              modalBar.innerHTML = "Subtitles are being removed. Please do not close the window. Removal will take approximately one hour.";
+            }
             else if (time_in_minutes > 1 && time_in_minutes < 60) {
               modalBar.innerHTML = "Subtitles are being removed. Please do not close the window. Removal will take approximately " + time_in_minutes + " minutes.";
             }

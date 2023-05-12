@@ -65,7 +65,7 @@ for opt, arg in opts:
     elif opt in ['-j']:
         counting_frames_given = int(arg)  
          
-if(xL is None or yL is None or xR is None or yR is None or filepath is None or height_of_video is None or  width_of_video is None or method_of_removing is None or technique_of_removing is None or counting_frames_given is None):
+if(xL is None or yL is None or xR is None or yR is None or filepath is None or height_of_video is None or  width_of_video is None or method_of_removing is None or technique_of_removing is None  or counting_frames_given is 0):
     print("Error. There is an argument which in None.")
     sys.exit(1)
 
@@ -110,7 +110,7 @@ info_subtitles_old = [0,0,0]
 info_subtitles_new = [0,0,0] 
 info_subtitles_middle = [0,0,0]
 
-all_info_subtitles  = []
+all_info_subtitles = []
 checking_old = 0
 checking_new = 0
 sum_progress_first= 0
@@ -130,9 +130,9 @@ my_frequency_for_bar = fps_total / counting_frames_given
 progress_bar_first = 700 / my_frequency_for_bar 
 
 if (method_of_removing == 1):
-    print("TIME_OF_REMOVING:",((fps_total//fps_second )*12)//60)
-else:
     print("TIME_OF_REMOVING:",((fps_total//fps_second )*6)//60)
+else:
+    print("TIME_OF_REMOVING:",((fps_total//fps_second )*4)//60)
     sys.stdout.flush()
 
 def medianblur(frame_s, maska): #method median blur
@@ -193,8 +193,8 @@ def not_zero_frame(subtitles_start):
 def create_mask(subtitles_start):
     global sum_progress_second
     global progress_bar_second
-    sum_progress_second += progress_bar_second
     print("PROGRESS: ",int(sum_progress_second))
+    sum_progress_second += progress_bar_second
     print("creating mask on frame", subtitles_start)
     sys.stdout.flush()
 
@@ -271,14 +271,14 @@ def find_exact_frame(start_frame,end_frame,start_text,end_text): #bisection
     checking_old=(low_frame - 1)
 
     info_subtitles_old[1] += 1 #extraframe just in case
-    all_info_subtitles .append(info_subtitles_old[:])
+    all_info_subtitles.append(info_subtitles_old[:])
     info_subtitles_old = info_subtitles_new
     info_subtitles_new=[0,0,0]
 
     if(checking_old+1 != checking_new):
         info_subtitles_middle[0]=checking_old+1
         info_subtitles_middle[1]=checking_new-1
-        all_info_subtitles .append(info_subtitles_middle[:])
+        all_info_subtitles.append(info_subtitles_middle[:])
         info_subtitles_middle=[0,0,0]
 
 
@@ -356,10 +356,11 @@ if method_of_removing == 1: #using keras, Subtitle Only method
 
     info_subtitles_old[1]=fps_total-1 #number of frames
     info_subtitles_old[1] += 1 #extraframe just in case
-    all_info_subtitles .append(info_subtitles_old[:])
-    print("all the subtitles",all_info_subtitles )
-    sum_of_ones = len([lst for lst in all_info_subtitles  if lst[-1] == 1]) #the total number of different subtitles
-    print(sum_of_ones)
+    all_info_subtitles.append(info_subtitles_old[:])
+    print("all the subtitles",all_info_subtitles)
+    sum_of_ones = len([lst for lst in all_info_subtitles if lst[-1] == 1]) #the total number of different subtitles
+    if(sum_of_ones == 0):
+        sum_of_ones = 1
     progress_bar_second = 250 / sum_of_ones
 
 if (video.isOpened()== False): 
@@ -409,21 +410,21 @@ while(video.isOpened()):
             frame_number = int(video.get(cv2.CAP_PROP_POS_FRAMES)) - 1 #get current frame number
             #going through subtitle ranges to see if the current frame is within a subtitle range
             found_subtitle_range = False
-            for i, (subtitle_from, subtitle_until, subtitle_bool) in enumerate(all_info_subtitles ):
+            for i, (subtitle_from, subtitle_until, subtitle_bool) in enumerate(all_info_subtitles):
                 if subtitle_bool == 1 and frame_number == subtitle_from:
                     exact_mask = create_mask(frame_number)
                 if frame_number >= subtitle_from and frame_number <= subtitle_until and subtitle_bool == 1:
                     found_subtitle_range = True
                                 
-                if i < len(all_info_subtitles )-1 and subtitle_bool == 1 and all_info_subtitles [i+1][2] == 1:
-                    next_subtitle_from, _, _ = all_info_subtitles [i+1]
+                if i < len(all_info_subtitles)-1 and subtitle_bool == 1 and all_info_subtitles[i+1][2] == 1:
+                    next_subtitle_from, _, _ = all_info_subtitles[i+1]
                     if frame_number == subtitle_until and next_subtitle_from != subtitle_until:
                         exact_mask = create_mask(frame_number)
                         found_subtitle_range = False # reset flag to ensure that the current frame is not written to the output
                         continue # skip writing the current frame to the output
                     
             #check if the current frame is within the last subtitle range and if that range has bool 1
-            last_subtitle_from, last_subtitle_until, last_subtitle_bool = all_info_subtitles [-1]
+            last_subtitle_from, last_subtitle_until, last_subtitle_bool = all_info_subtitles[-1]
             if frame_number >= last_subtitle_from and frame_number <= last_subtitle_until and last_subtitle_bool == 1:
                 found_subtitle_range = True
                 if last_subtitle_bool == 1 and frame_number == last_subtitle_from:
@@ -444,8 +445,8 @@ while(video.isOpened()):
                 elif technique_of_removing == 3: #median blur vsetko
                     no_subtitles_frame = medianblur(frame,exact_mask)
                     output.write(no_subtitles_frame)
-                if len(all_info_subtitles ) > 1:#check if next frame is in range following with bool of rmeoving
-                    next_subtitle_from, next_subtitle_until, next_subtitle_bool = all_info_subtitles [1]
+                if len(all_info_subtitles) > 1:#check if next frame is in range following with bool of rmeoving
+                    next_subtitle_from, next_subtitle_until, next_subtitle_bool = all_info_subtitles[1]
                     if frame_number == subtitle_until and next_subtitle_bool == 0:
                         video.read() # skip the next frame
         else:
